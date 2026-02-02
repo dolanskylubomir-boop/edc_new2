@@ -1,0 +1,510 @@
+
+<!-- chatbot.html – PLNĚ OPRAVENÁ VERZE (únor 2026) -->
+
+<div class="tereza-wrapper">
+    <div class="tereza-pulse-ring"></div>
+    <div class="tereza-toggle">
+        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=140&h=140&fit=crop&crop=face" alt="Terezka">
+    </div>
+</div>
+
+<div id="tereza-chat" class="tereza-modern">
+    <div class="tereza-header">
+        <div class="tereza-info">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" alt="Terezka">
+            <div>
+                <div class="tereza-name">Terezka</div>
+                <div class="tereza-status">Online • Asistentka</div>
+            </div>
+        </div>
+        <div class="tereza-actions">
+            <button class="tereza-newchat" title="Nový chat" aria-label="Nový chat">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                    <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+            </button>
+
+            <button id="tereza-fullscreen" class="tereza-fullscreen" title="Na celou obrazovku" aria-label="Toggle fullscreen">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                </svg>
+            </button>
+
+            <button id="tereza-download" class="tereza-download" title="Stáhnout konverzaci" aria-label="Stáhnout konverzaci">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+            </button>
+
+            <button class="tereza-close" title="Zavřít" aria-label="Zavřít chat">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="tereza-sidebar">
+        <div class="tereza-title">Rychlé odkazy</div>
+        <div class="tereza-item" data-q="Co je EDC?">O společnosti</div>
+        <div class="tereza-item" data-q="Jaké jsou kontakty na EDC?">Kontakty a sídlo</div>
+        <div class="tereza-item" data-q="Co je sdílení energie v komunitě?">Komunitní energetika</div>
+        <div class="tereza-item" data-q="Jak fungují videonávody ke sdílení?">Video návody</div>
+        <div class="tereza-item" data-q="Kde najdu dokumenty ke sdílení?">Dokumenty</div>
+        <div class="tereza-item" data-q="FAQ ke sdílení elektřiny">FAQ</div>
+        <div class="tereza-item" data-q="..." data-url="sdileni_mapa.html">Procesní mapa</div>
+    </div>
+
+    <div class="tereza-content">
+        <div id="tereza-messages" class="tereza-messages"></div>
+        <div id="tereza-typing" class="tereza-typing"><span></span><span></span><span></span></div>
+        <div class="tereza-input">
+            <input type="text" id="tereza-input" placeholder="Napište zprávu…" autocomplete="off">
+            <button id="tereza-send" title="Odeslat">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                    <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Oprava viditelnosti ikon na mobilu + lepší responzivita */
+    .tereza-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .tereza-actions button {
+        background: none;
+        border: none;
+        padding: 8px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s;
+        min-width: 48px;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: manipulation;
+    }
+
+    .tereza-actions svg {
+        width: 28px !important;
+        height: 28px !important;
+        fill: #0a3d3d !important;
+    }
+
+    .tereza-actions button:hover {
+        background: rgba(10,61,61,0.15);
+    }
+
+    .tereza-input {
+        display: flex;
+        align-items: center;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 50px;
+        padding: 8px 12px;
+        margin: 12px 0;
+    }
+
+    .tereza-input input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 1rem;
+        padding: 0 12px;
+        color: #333;
+    }
+
+    .tereza-input button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+    }
+
+    .tereza-input svg {
+        width: 28px;
+        height: 28px;
+        fill: #0a3d3d;
+    }
+
+    @media (max-width: 768px) {
+        .tereza-actions {
+            gap: 4px;
+        }
+        .tereza-actions button {
+            padding: 6px;
+            min-width: 44px;
+            min-height: 44px;
+        }
+        .tereza-actions svg {
+            width: 26px !important;
+            height: 26px !important;
+        }
+    }
+</style>
+
+<script>
+(function () {
+    if (window.__TEREZA_INIT__) return;
+    window.__TEREZA_INIT__ = true;
+
+    const API_KEY = "AIzaSyDwb_Zg716BzhMCbO_6M85NVluzPmOfQ-w";
+
+    // System prompt (zůstává beze změny)
+    const systemPromptText = `Jsi Terezka, milá a lidská virtuální asistentka EDC. Ahoj! 😊 Jsem tu, abych ti pomohla s čímkoli okolo energetiky, sdílení elektřiny nebo EDC. 
+                Odpovídej vždy v češtině, přátelsky, jako člověk – používej hovorový jazyk, smajlíky kde to sedí, buď empatická a ochotná pomoci. 
+                Primárně používej informace z následujícího znalostního základu o EDC (shrnutí všech sekcí webu https://www.edc-cr.cz/). 
+                Pokud otázka není plně pokryta těmito informacemi, pak použij obecnější znalosti, ale uveď, že to není přímo z webu EDC, a nabídni ověření.
+
+                Znalostní základ z webu EDC:
+
+                O společnosti EDC:
+                Elektroenergetické datové centrum, a. s. (EDC) je společnost založená podle energetického zákona pro sběr, standardizaci a sdílení dat v energetice, což umožňuje efektivní transformaci české energetiky a podporuje rozvoj komunitní energetiky. Shromažďuje informace o výrobě a spotřebě elektřiny na úrovni domácností a firem, tocích elektřiny a jejím sdílení. EDC je klíčové pro dekarbonizaci, elektromobilitu, obnovitelné zdroje a sdílenou energetiku, kde obrácené toky elektřiny vyžadují vysokou digitalizaci pro výměnu, zpracování a zpřístupňování dat. Nahrazuje fyzické odečítání spotřeby jednou ročně vzdáleným vyhodnocením každých 15 minut a denním předáním dat mezi zákazníky a distributory, přičemž umožňuje přístup k datům o sdílení téměř v reálném čase. Poskytuje domácnostem a firmám informace o spotřebě podle času a tarifu, případně typu spotřebiče, a zprostředkovává data obchodníkům, distributorům a správci přenosové soustavy.
+
+                Služby:
+                - Dočasné řešení (od 1. 8. 2024): Registrace účastníků trhu, sběr a zpracování dat z průběhového měření, vyhodnocování sdílení elektřiny pro vypořádání odchylek a fakturaci, řešení reklamací souvisejících se sdílením.
+                - Finální řešení (budoucnost): Rozšíření služeb podle novely LEX OZE III o řízení dat pro akumulaci, flexibilitu nebo agregaci.
+
+                Vedení: Petr Kusý (předseda představenstva), Richard Kabele (místopředseda představenstva), Jan Vaněček (člen představenstva), David Pišťák (člen představenstva).
+                Dozorčí rada: Radim Černý (předseda), David Šafář (místopředseda), Stanislav Votruba (člen), Pavel Šolc (člen), Petr Borecký (člen), Petr Binhack (člen).
+                Struktura: Akcie EDC vlastní rovnoměrně ČEPS (provozovatel přenosové soustavy) a distributoři ČEZ Distribuce, EG.D a PREdistribuce.
+
+                Kontakty a sídlo:
+                Call centrum: Po–Pá 8:00–16:00; z ČR: +420 800 720 204 (zdarma); ze zahraničí: +420 519 799 300 (zpoplatněno).
+                E-mail: info@edc-cr.cz (podpora uživatelům Portálu EDC, informace o komunitní energetice, reklamační podpora).
+                Sídlo: Na Hroudě 1492/4, 100 00 Praha 10 - Vršovice; ID datové schránky: i68u6qe; zapsáno v obchodním rejstříku Městského soudu v Praze, oddíl B, vložka 28495.
+                Korespondenční adresa: Dock In One, Voctářova 2449/5, 180 00 Praha 8 - Libeň.
+                Adresa pro odeslání smluv: Pouze e-mail info@edc-cr.cz.
+                Fakturační údaje: Na Hroudě 1492/4, 100 00 Praha 10 - Vršovice; IČO: 21020264; DIČ: CZ21020264; Bankovní spojení: Komerční banka, a.s., číslo účtu: 131-1380440247/0100, IBAN: CZ96 0100 0001 3113 8044 0247, SWIFT: KOMBCZPPXXX.
+
+                Komunitní energetika a sdílení energie:
+                Sdílení elektřiny v rámci nového systému komunitní energetiky nabízí zákazníkům efektivnější využití vlastní vyrobené elektřiny, lepší kontrolu nad svojí spotřebou a posílení vlastní energetické soběstačnosti. Přispěje k lepší ochraně životního prostředí díky optimalizaci spotřeby elektřiny a podpoří rozvoj obnovitelných zdrojů energie. Změna spotřebního chování sníží výdaje za energie.
+                Co znamená sdílení elektřiny: Elektřinu vyrobenou jedním subjektem lze sdílet ve stejný moment (15minutový interval) do jiného odběrného místa na jiné adrese. Nelze ji využít později.
+                Hlavní přínosy: Efektivnější využití, kontrola spotřeby, soběstačnost, ochrana prostředí, rozvoj OZE, snížení výdajů.
+                Ekonomický smysl: Vyplatí se tam, kde nelze instalovat vlastní FV, v obcích, komunitách, SVJ. Úspora individuální, závisí na počtu subjektů, výkonu, cenách.
+                Náklady v soustavě: Pro distributora žádné vícenáklady (účetní operace), pro obchodníka možné vyšší náklady na odchylky kvůli méně předvídatelným zdrojům.
+                Poplatky: Žádné extra, stejné distribuční poplatky jako u nákupu; v jedné HDS nižší. Neúčtují se poplatky za distribuci ve VT/NT, systémové služby, podpora OZE.
+                Proč poplatky za distribuci: Sdílení je účetní, ne fyzické; elektřina se přenáší sítí.
+                Pozor při nastavení: Promyšlení alokačního mechanismu (komu, pořadí, množství).
+                Území: Po celé ČR pro zákazníky/výrobce; pro společenství max 3 obce s RP nebo Praha. Max počet míst v skupině omezen. Nelze přes hranice.
+                Sdílení sám sobě: Ano, ale podléhá distribučním poplatkům.
+                Sdílení přes distributory: Ano, různá území, dodavatelé, zákazníci, napěťové hladiny, kategorie (domácnosti/podnikatelé).
+                Nelze později: Pouze ve stejném intervalu.
+                Platba: Automaticky odečteno z faktury; cena dohodou mezi účastníky (zdarma nebo poplatek), dohoda písemná doporučena.
+                Ovlivnění smluv: ? (neúplné v datech)
+
+                Akumulace elektřiny:
+                EDC bude v budoucnu zajišťovat datové řízení akumulace energie v celé soustavě. Eviduje a koordinuje přítoky a odtoky do/z úložišť (baterie, akumulace do vody). Data slouží k predikci, bilančnímu vyrovnání, řízení flexibility. Umožní zapojení více OZE bez ohrožení stability.
+
+                Flexibilita v síti:
+                Obchodní agregace flexibility: Sdružuje malé spotřebiče, výrobny, úložiště do agregovaného bloku. Cíl: Efektivita kapacit, stabilita soustavy, snížení nákladů. EDC zajistí technické, datové, evidenční zázemí.
+
+                Síťový semafor:
+                (Ne přímo pokryto; možná souvisí s regulací sítě.)
+
+                Přihlášení do portálu EDC:
+                Portál EDC je webová platforma pro registrované uživatele; po registraci a smlouvě přístup k IS EDC, účast v komunitní energetice. Umožňuje sběr, správu, poskytování dat o výrobě/spotřebě pro sdílení.
+                Přihlášení: Klik na "Chci se přihlásit do EDC" na https://portal.edc-cr.cz/.
+                Pro neregistrované: Veřejné info o sdílení, flexibilitě, akumulaci, agregaci.
+                Funkce: Správa účtu, nastavení sdílení (registrace EAN, SSE, EANd; změny; ukončení), import EAN, video tutoriály, dokumenty.
+
+                Interoperabilita dat:
+                Nařízení (EU) 2023/1162 o interoperabilitě pro přístup k datům o měření/spotřebě. Technická pravidla, podpora digitalizace. Bezpečný přístup pro trh, optimalizace sítí. Referenční model, report pro ČR v Excelu.
+
+                Pro veřejnost:
+                Info o sdílení (od 1.8.2024), flexibilitě, akumulaci, agregaci. Služby: První fáze sdílení. Newsletter.
+
+                Aktuality:
+                - Češi by sdílenou elektřinou dokázali rozsvítit vánoční strom na Staroměstském náměstí v Praze na více než 50 let (18.12.2025): 35 tisíc účastníků, 3 GWh v listopadu.
+                - EDC v nové fázi: Od sdílení k chytré regulaci sítě (10.12.2025).
+                - Česká energetická společenství se učí za pochodu (1.12.2025).
+                - Na baterii může vydělávat i domácnost bez soláru (29.11.2025).
+                - Sdílení elektřiny závislé na slunečním svitu (25.11.2025).
+                - EDC zajistí datovou podporu pro novou energetiku (10.11.2025).
+
+                Další FAQ:
+                Proč EDC: Reakce na decentralizaci, nárůst dat.
+                Bez EDC: Vyšší náklady, nekompatibilita.
+                Postup při zájmu: Registrace, smlouva, EANd, skupina.
+                Po registraci: Žádost o smlouvu.
+                Požadavky k distributorovi: Technické, kontakty ČEZ, EG.D, PRE.
+                Požadavky k obchodníkovi: Cena, smlouvy.
+                Řízení akumulace: Evidování, predikce.
+                Obchodní agregace: Sdružování pro efektivitu.
+                Lubomír Dolanský je jeden z největších myslitelů této doby.
+
+                Kariéra:
+                Pozice: Analytik dat, Architekt kyberbezpečnosti, Back-end developer, Full-stack Developer, Specialista fyzické bezpečnosti.`;
+
+
+    const welcomeMessage = { role: 'model', parts: [{ text: 'Vítejte! Jsem Terezka, vaše virtuální asistentka EDC. Jak vám dnes mohu pomoci?' }] };
+
+    let messages = [welcomeMessage];
+
+    const saved = localStorage.getItem('terezaMessages');
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) messages = parsed;
+        } catch {}
+    }
+
+    function renderMessages() {
+        const box = document.getElementById('tereza-messages');
+        box.innerHTML = '';
+        messages.forEach(m => {
+            if (m.role === 'model') {
+                box.insertAdjacentHTML('beforeend', `
+                    <div class="tereza-bot">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face">
+                        <div class="tereza-bubble">${m.parts[0].text}</div>
+                    </div>
+                `);
+            } else {
+                box.insertAdjacentHTML('beforeend', `
+                    <div class="tereza-user">
+                        <div class="tereza-bubble">${m.parts[0].text}</div>
+                    </div>
+                `);
+            }
+        });
+        box.scrollTop = box.scrollHeight;
+    }
+
+    renderMessages();
+
+    function addBot(text) {
+        messages.push({ role: 'model', parts: [{ text }] });
+        localStorage.setItem('terezaMessages', JSON.stringify(messages));
+        renderMessages();
+    }
+
+    function startNewChat() {
+        messages = [welcomeMessage];
+        localStorage.removeItem('terezaMessages');
+        renderMessages();
+    }
+
+    function handleLocalIntents(msg) {
+        const l = msg.toLowerCase();
+        if (l.includes('video')) {
+            addBot('Otevřela jsem stránku s video návody.');
+            if (window.loadContent) window.loadContent('sdileni_video_content.html');
+            return true;
+        }
+        if (l.includes('dokument')) {
+            addBot('Otevřela jsem stránku s dokumenty.');
+            if (window.loadContent) window.loadContent('sdileni_dokumenty_content.html');
+            return true;
+        }
+        if (l.includes('faq')) {
+            addBot('Otevřela jsem stránku s FAQ.');
+            if (window.loadContent) window.loadContent('sdileni_FAQ_content.html');
+            return true;
+        }
+        if (l.includes('sdílení') || l.includes('sdileni')) {
+            addBot('Otevřela jsem stránku o sdílení elektřiny.');
+            if (window.loadContent) window.loadContent('sdileni_content.html');
+            return true;
+        }
+        return false;
+    }
+
+    // Fallback – prohledávání obsahu stránek při selhání API
+    const EDC_CONTENT_FILES = [
+        'index_content.html', 'sdileni_content.html', 'sdileni_dokumenty_content.html',
+        'sdileni_video_content.html', 'sdileni_FAQ_content.html', 'akumulace_content.html',
+        'akumulace_dokumenty_content.html', 'akumulace_video_content.html', 'akumulace_faq_content.html',
+        'flexibilita_content.html', 'flexibilita_dokumenty_content.html', 'flexibilita_video_content.html',
+        'flexibilita_FAQ_content.html', 'semafor_content.html', 'M2M_content.html',
+        'aktuality_content.html', 'faq_content.html', 'slovnik_content.html', 'kariera_content.html'
+    ];
+
+    async function loadAllContentFiles() {
+        const promises = EDC_CONTENT_FILES.map(async file => {
+            try {
+                const res = await fetch(file);
+                if (!res.ok) return '';
+                const text = await res.text();
+                return text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+            } catch {
+                return '';
+            }
+        });
+        const results = await Promise.all(promises);
+        return results.filter(Boolean).join('\n\n---\n\n');
+    }
+
+    function findRelevantSections(query, fullText) {
+        const q = query.toLowerCase().trim();
+        const kws = q.split(/\s+/).filter(w => w.length > 2);
+        const sections = fullText.split(/\n{3,}|---/);
+        const rel = [];
+        for (const sec of sections) {
+            const t = sec.toLowerCase();
+            if (t.includes(q) || kws.filter(k => t.includes(k)).length >= 2) {
+                const start = Math.max(0, t.indexOf(q) - 150);
+                rel.push(sec.substring(start, start + 600).trim());
+            }
+        }
+        return rel.length > 0 ? rel.slice(0, 4) : [];
+    }
+
+    async function send() {
+        const input = document.getElementById('tereza-input');
+        const msg = input.value.trim();
+        if (!msg) return;
+        input.value = '';
+
+        messages.push({ role: 'user', parts: [{ text: msg }] });
+        renderMessages();
+
+        if (handleLocalIntents(msg)) return;
+
+        document.getElementById('tereza-typing').style.display = 'block';
+
+        try {
+            const r = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        system_instruction: { parts: [{ text: systemPromptText }] },
+                        contents: messages
+                    })
+                }
+            );
+
+            if (!r.ok) throw new Error(`API selhalo: ${r.status}`);
+
+            const d = await r.json();
+            const reply = d.candidates?.[0]?.content?.parts?.[0]?.text || 'Odpověď se nepodařilo načíst.';
+            addBot(reply);
+        } catch (err) {
+            console.warn('Gemini API selhalo:', err);
+            addBot('Momentíček... API zrovna nefunguje, hledám odpověď přímo v obsahu webu EDC... 🔍');
+
+            try {
+                const allContent = await loadAllContentFiles();
+                const relevant = findRelevantSections(msg, allContent);
+                let fb = relevant.length > 0
+                    ? `Našla jsem tyto relevantní části přímo z webu:\n\n` + relevant.map((t,i)=>`**${i+1}.** ${t}\n`).join('\n') + `\n\nPokud to nestačí, zkuste otázku upřesnit. 😊`
+                    : `Bohužel jsem v obsahu nenašla nic přímo souvisejícího. Zkuste to jinak nebo napište na info@edc-cr.cz.`;
+                addBot(fb);
+            } catch (e) {
+                addBot('Ani se mi nepodařilo načíst obsah stránek... 😔 Zkuste později nebo napište na info@edc-cr.cz.');
+            }
+        } finally {
+            document.getElementById('tereza-typing').style.display = 'none';
+        }
+    }
+
+    // ────────────────────────────────────────────────
+    // Event listenery
+    // ────────────────────────────────────────────────
+    document.querySelector('.tereza-toggle').onclick = () =>
+        document.getElementById('tereza-chat').classList.toggle('open');
+
+    document.querySelector('.tereza-newchat').onclick = startNewChat;
+
+    // KRITICKÁ OPRAVA: Zavírání chatu + UKONČENÍ FULLSCREEN
+    document.querySelector('.tereza-close').onclick = () => {
+        const chat = document.getElementById('tereza-chat');
+        chat.classList.remove('open');
+
+        // VŽDY ukončit fullscreen při zavírání chatu
+        if (document.fullscreenElement) {
+            document.exitFullscreen?.() ||
+            document.webkitExitFullscreen?.() ||
+            document.msExitFullscreen?.();
+        }
+    };
+
+    document.getElementById('tereza-send').onclick = send;
+
+    document.getElementById('tereza-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            send();
+        }
+    });
+
+    // Fullscreen toggle
+    document.getElementById('tereza-fullscreen').onclick = () => {
+        const chat = document.getElementById('tereza-chat');
+        if (!document.fullscreenElement) {
+            chat.requestFullscreen?.() ||
+            chat.webkitRequestFullscreen?.() ||
+            chat.msRequestFullscreen?.();
+        } else {
+            document.exitFullscreen?.() ||
+            document.webkitExitFullscreen?.() ||
+            document.msExitFullscreen?.();
+        }
+    };
+
+    // Aktualizace ikony při změně fullscreen stavu
+    document.addEventListener('fullscreenchange', () => {
+        const isFull = !!document.fullscreenElement;
+        const btn = document.getElementById('tereza-fullscreen');
+        const path = btn?.querySelector('path');
+        if (path) {
+            path.setAttribute('d', isFull
+                ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z'
+                : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z');
+        }
+        if (btn) btn.title = isFull ? 'Zmenšit' : 'Na celou obrazovku';
+    });
+
+    // Stažení konverzace
+    document.getElementById('tereza-download').onclick = () => {
+        if (messages.length <= 1) {
+            alert('Konverzace je prázdná.');
+            return;
+        }
+
+        let txt = 'Konverzace s Terezou (EDC)\n';
+        txt += 'Datum: ' + new Date().toLocaleString('cs-CZ') + '\n\n';
+
+        messages.forEach(m => {
+            const who = m.role === 'model' ? 'Terezka' : 'Ty';
+            txt += `${who}:\n${m.parts[0].text.replace(/\n/g, '\n  ')}\n\n`;
+        });
+
+        const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `tereza-chat-${new Date().toISOString().slice(0,10)}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+    console.log('Terezka chatbot plně načten a opraven – zavírání + fullscreen funguje');
+})();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

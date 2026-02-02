@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <!--single-page aplikace (SPA)-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Elektroenergetické datové centrum (EDC) – centrální platforma pro sdílení dat v české energetice. Podporujeme komunitní energetiku, akumulace, flexibilita a aktivní zákazníky.">
+    <meta name="keywords" content="EDC, elektroenergetické datové centrum, komunitní energetika, sdílení energie, akumulace, flexibilita, síťový semafor, OTE, ČR">
+    <meta name="author" content="Elektroenergetické datové centrum, a.s.">
+    <meta name="robots" content="index, follow">
+
+    <title>EDC – Elektroenergetické datové centrum | Sdílení, akumulace a flexibilita energie</title>
+    <link rel="canonical" href="https://tvojedomena.cz/">
+    
+<!-- Dočasné favicony - nahraďte až budete mít reálné -->
+    <link rel="icon" type="image/x-icon" href="https://favicon.io/static/favicons/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://favicon.io/static/favicons/apple-touch-icon.png">
+
+    <!-- Dočasné OG image - nahraďte až budete mít reálný obrázek -->
+    <meta property="og:image" content="https://images.unsplash.com/photo-1629654291660-3c98113a0437?w=1200&h=630&fit=crop&crop=center">
+    <meta property="og:url" content="https://tvojedomena.cz">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EDC – Elektroenergetické datové centrum">
+    <meta name="twitter:description" content="Centrální platforma pro sdílení dat v české energetice">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1629654291660-3c98113a0437?w=1200&h=630&fit=crop&crop=center">
+
+    <link rel="stylesheet" href="styles.css?v=20260106123456">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Cookie banner inline styles -->
+    <style>
+        #cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            z-index: 9999;
+            display: none;
+        }
+        #cookie-banner p { margin: 0 0 10px 0; }
+        #cookie-banner button {
+            background: #fff;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #cookie-banner a { color: #fff; text-decoration: underline; }
+        
+        .construction-banner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: auto;
+            max-width: 90%;
+            min-width: 300px;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            font-weight: 900;
+            font-size: 2rem;
+            padding: 2rem 3rem;
+            text-align: center;
+            z-index: 9999;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            pointer-events: none;
+            animation: pulse 2s infinite;
+            border: 3px solid #ffcccc;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .construction-icon {
+            animation: blink 1s infinite;
+        }
+        
+        .construction-icon:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            }
+            50% { 
+                opacity: 0.95;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Mobilní úpravy */
+        @media (max-width: 768px) {
+            .construction-banner {
+                font-size: 1.5rem !important;
+                padding: 1.5rem 2rem !important;
+                letter-spacing: 2px !important;
+                min-width: 250px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .construction-banner {
+                font-size: 1.2rem !important;
+                padding: 1.2rem 1.5rem !important;
+                letter-spacing: 1px !important;
+                min-width: 200px !important;
+            }
+        }
+    </style>
+
+    <script src="js/slovnik-data.js" defer></script>
+</head>
+
+<body>
+
+    <!-- Levá roleta -->
+    <div class="curtain curtain-left" aria-hidden="true"></div>
+
+    <!-- Pravá roleta -->
+    <div class="curtain curtain-right" aria-hidden="true"></div>
+
+    <!-- Overlay pro mobilní menu -->
+    <div class="nav-overlay"></div>
+
+    <!-- Cookie banner -->
+    <div id="cookie-banner">
+        <p>
+            Tento web používá cookies k lepšímu zážitku, analýze návštěvnosti a personalizaci obsahu.
+            Více informací v <a href="/cookies/gdpr.pdf">Zásadách cookies</a>.
+        </p>
+        <button id="accept-all">Přijmout vše</button>
+        <button id="necessary-only">Pouze nezbytné</button>
+        <button id="reject-all">Odmítnout vše</button>
+    </div>
+
+    <!--Banner pro hlášky nedostupnosti-->
+    <div id="warning-banner" class="warning-banner" style="display: none;">
+        <div class="warning-content">
+            <span class="warning-icon">⚠️</span>
+            <span id="warning-text">Výchozí varovný text – upravte podle potřeby.</span>
+            <span class="warning-icon">⚠️</span>
+        </div>
+        <button class="warning-close" onclick="closeWarningBanner()" aria-label="Zavřít banner">×</button>
+    </div>
+
+    <!-- Hlavní obsah – dynamicky nahrazován -->
+    <main id="main-content" class="container">
+        <noscript>
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Jsme Elektroenergetické datové centrum.</h1>
+                    <p>
+                        Představujeme klíčový pilíř pro nová technická řešení. Umožňujeme přechod k moderní decentralizované,
+                        digitální a dekarbonizované elektroenergetice. Zajišťujeme výměnu dat spojených s činnostmi energetického trhu.
+                        Podporujeme rozvoj komunitní energetiky. Přispíváme k posílení role aktivního zákazníka.
+                    </p>
+                </div>
+            </section>
+
+            <section class="modals-section">
+                <div class="modal-trigger"><h3>O společnosti</h3><p>Vše o EDC</p></div>
+                <div class="modal-trigger"><h3>Kontakty</h3><p>Adresy a sídla</p></div>
+                <div class="modal-trigger"><h3>Kariéra</h3><p>Práce v EDC</p></div>
+                <div class="modal-trigger"><h3>Interoperabilita dat</h3><p>Dokumenty</p></div>
+                <div class="modal-trigger"><h3>M2M komunikace</h3><p>Dokumenty</p></div>
+                <div class="modal-trigger"><h3>Sdílení</h3><p>Vše co byste měli vědět</p></div>
+                <div class="modal-trigger"><h3>Akumulace</h3><p>Vše co byste měli vědět</p></div>
+                <div class="modal-trigger"><h3>Flexibilita</h3><p>Vše co byste mědět vědět</p></div>
+                <div class="modal-trigger"><h3>Síťový semafor</h3><p>Vše co byste měli vědět</p></div>
+                <div class="modal-trigger"><h3>EDC slovník energetiky</h3><p>Vše co byste měli vědět</p></div>
+                <div class="modal-trigger"><h3>FAQ</h3><p>Nejčastější dotazy</p></div>
+                <div class="modal-trigger"><h3>FAQ</h3><p>EDC - informace</p></div>
+                <div class="modal-trigger"><h3>FAQ</h3><p>EDC - statistiky</p></div>
+                <div class="modal-trigger"><h3>Mapa webu</h3><p>Struktura stránek EDC</p></div>
+            </section>
+        </noscript>
+    </main>
+
+    <!-- ====================== VELKÉ MODÁLY – vždy přítomné v DOM ====================== -->
+    <div id="modal1" class="modal" role="dialog" aria-labelledby="modal1-title">
+        <div class="modal-content has-scroll" style="background-image: url('obrázky/zarovky.png');">
+            <span class="close" onclick="closeModal('modal1')" aria-label="Zavřít dialog">×</span>
+            <div class="modal-inner">
+                <div>
+                    <h2 id="modal1-title">Společnost EDC</h2>
+                    <p>Chcete mít přehled o aktuálních informacích a o společnosti EDC? Vyberte si z následující nabídky:</p>
+                </div>
+                <div class="sub-modal-grid">
+                    <div class="sub-modal-trigger" 
+                         onclick="window.loadContent && window.loadContent('aktuality_content.html'); closeModal('modal1')">
+                        <h3>Aktuality a tiskové zprávy</h3>
+                    </div>
+                    <div class="sub-modal-trigger" 
+                         onclick="window.loadContent && window.loadContent('struktura_spolecnosti_content.html'); closeModal('modal1')">
+                        <h3>Struktura společnosti</h3>
+                    </div>
+                    <div class="sub-modal-trigger" 
+                         onclick="window.loadContent && window.loadContent('povinna-sdeleni_content.html'); closeModal('modal1')">
+                        <h3>Povinná sdělení</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal2" class="modal" role="dialog" aria-labelledby="modal2-title">
+        <div class="modal-content no-scroll" style="background-image: url('obrázky/zarovky.png');">
+            <span class="close" onclick="closeModal('modal2')" aria-label="Zavřít dialog">×</span>
+            <div class="modal-inner">
+                <div><h2 id="modal2-title">Zde najdete všechny dostupné kontakty.</h2><p>Neváhejte nás kontaktovat.</p></div>
+                <div class="sub-modal-grid">
+                    <div class="sub-modal-trigger" onclick="openSubModal('sub2-1')"><h3>Fakturační údaje</h3></div>
+                    <div class="sub-modal-trigger" onclick="openSubModal('sub2-2')"><h3>Korespondenční adresa</h3></div>
+                    <div class="sub-modal-trigger" onclick="openSubModal('sub2-3')"><h3>Sídlo společnosti</h3></div>
+                    <div class="sub-modal-trigger" onclick="openSubModal('sub2-4')"><h3>Call centrum EDC</h3></div>
+                    <div class="sub-modal-trigger" onclick="openSubModal('sub2-5')"><h3>YouTube kanál EDC</h3></div>
+                    <div class="sub-modal-trigger" onclick="openSubModal('sub2-6')"><h3>Workshopy a semináře</h3></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal5" class="modal" role="dialog" aria-labelledby="modal5-title">
+        <div class="modal-content has-scroll" style="background-image: url('obrázky/zarovky.png');">
+            <span class="close" onclick="closeModal('modal5')" aria-label="Zavřít dialog">×</span>
+            <div class="modal-inner">
+                <div>
+                    <h2 id="modal5-title">Dokumenty pro distributory, agregátory a obchodníky</h2>
+                    <p>Vše o automatické komunikaci a další manuály naleznete zde.</p>
+                </div>
+                <div class="sub-modal-grid">
+                    <div class="sub-modal-trigger" onclick="loadContent('M2M_sdileni_content.html'); closeModal('modal5')">
+                        <h3>M2M komunikace sdílení, akumulace</h3>
+                    </div>
+                    <div class="sub-modal-trigger" onclick="loadContent('M2M_semafor_content.html'); closeModal('modal5')">
+                        <h3>M2M komunikace síťový semafor</h3>
+                    </div>
+                    <div class="sub-modal-trigger" onclick="loadContent('M2M_flexibilita_content.html'); closeModal('modal5')">
+                        <h3>M2M komunikace agregace, technická flexibilita</h3>
+                    </div>
+                </div>
+                <div class="modal-btn" onclick="loadContent('M2M_content.html'); closeModal('modal5')">
+                    Více informací →
+                </div>
+            </div>
+
+            <!-- Banner stránky se připravují -->
+            <div class="construction-banner">
+                <span class="construction-icon">⚠️</span> 
+                Stránky se připravují 
+                <span class="construction-icon">⚠️</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal6" class="modal" role="dialog" aria-labelledby="modal6-title">
+        <div class="modal-content has-scroll" style="background-image: url('obrázky/zarovky.png');">
+            <span class="close" onclick="closeModal('modal6')" aria-label="Zavřít dialog">×</span>
+            <div class="modal-inner">
+                <div>
+                    <h2 id="modal6-title">Sdílení</h2>
+                    <p>Vše o sdílení elektřiny a Portálu EDC naleznete zde.</p>
+                </div>
+                <div class="sub-modal-grid">
+                    <div class="sub-modal-trigger" onclick="loadContent('sdileni_video_content.html'); closeModal('modal6')">
+                        <h3>Videomanuály</h3>
+                    </div>
+                    <div class="sub-modal-trigger" onclick="loadContent('sdileni_dokumenty_content.html'); closeModal('modal6')">
+                        <h3>Dokumenty ke stažení</h3>
+                    </div>
+                    <div class="sub-modal-trigger" onclick="loadContent('sdileni_FAQ_content.html'); closeModal('modal6')">
+                        <h3>Sdílení souhrn</h3>
+                    </div>
+                </div>
+                <div class="modal-btn" onclick="window.location.href = 'sdileni_mapa.html'; closeModal('modal6')">
+                    Proces sdílení v kostce →
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal7" class="modal" role="dialog" aria-labelledby="modal7-title">
+        <div class="modal-content has-scroll" style="background-image: url('obrázky/zarovky.png');">
+            <span class="close" onclick="closeModal('modal7')" aria-label="Zavřít dialog">×</span>
+            <div class="modal-inner">
+                <div>
+                    <h2 id="modal7-title">Akumulace</h2>
+                    <p>Vše o akumulaci elektřiny a Portálu EDC naleznete zde.</p>
+                </div>
+                <div class="sub-modal-grid">
+                    <div class="sub-modal-trigger" onclick="loadContent('akumulace_video_content.html'); closeModal('modal7')">
+                        <h3>Videomanuály</h3>
+                    </div>
+                    <div class="sub-modal-trigger" onclick="loadContent('akumulace_dokumenty_content.html'); closeModal('modal7')">
+                        <h3>Dokumenty ke stažení</h3>
+                    </div>
+                    <div class="sub-modal-trigger" onclick="loadContent('akumulace_FAQ_content.html'); closeModal('modal7')">
+                        <h3>Akumulace souhrn</h3>
+                    </div>
+                </div>
+                <div class="modal-btn" onclick="loadContent('akumulace_content.html'); closeModal('modal7')">
+                    Více informací →
+                </div>
+            </div>
+
+            <!-- Banner stránky se připravují -->
+            <div class="construction-banner">
+                <span class="construction-icon">⚠️</span> 
+                Stránky se připravují 
+                <span class="construction-icon">⚠️</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal8" class="modal" role="dialog" aria-labelledby="modal8-title">
+        <div class="modal-content has-scroll" style="background-image: url('obrázky/zarovky.png');">
+            <span class="close" onclick="closeModal('modal8')" aria-label="Zavřít dialog">×</span>
+            <div class="modal-inner">
+                <div>
+                    <h2 id="modal8-title">Flexibilita</h2>
+                    <p>Vše o Flexibilitě naleznete zde.</p>
+                </div>
+                <div class="sub-modal-grid">
+                    <div class="sub-modal-trigger" onclick="loadContent('flexibilita_video_content.html'); closeModal('modal8')">
+                        <h3>Videomanuály</h3>
+                    </div>
+                    <div class="sub-modal-trigger" onclick="loadContent('flexibilita_dokumenty_content.html'); closeModal('modal8')">
+                        <h3>Dokumenty ke stažení</h3>
+                    </div>
+                    <div class="sub-modal-trigger" onclick="loadContent('flexibilita_FAQ_content.html'); closeModal('modal8')">
+                        <h3>Flexibilita souhrn</h3>
+                    </div>
+                </div>
+                <div class="modal-btn" onclick="loadContent('flexibilita_content.html'); closeModal('modal8')">
+                    Více informací →
+                </div>
+            </div>
+
+            <!-- Banner stránky se připravují -->
+            <div class="construction-banner">
+                <span class="construction-icon">⚠️</span> 
+                Stránky se připravují 
+                <span class="construction-icon">⚠️</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal9" class="modal" role="dialog" aria-labelledby="modal9-title">
+        <div class="modal-content has-scroll" style="background-image: url('obrázky/zarovky.png');">
+            <span class="close" onclick="closeModal('modal9')" aria-label="Zavřít dialog">×</span>
+            <div class="modal-inner">
+                <div>
+                    <h2 id="modal9-title">Síťový semafor</h2>
+                    <p>Vše o Síťovém semaforu naleznete zde.</p>
+                </div>
+                <div class="sub-modal-grid">
+                    <div class="sub-modal-trigger" onclick="loadContent('semafor_video_content.html'); closeModal('modal9')">
+                        <h3>Videomanuály</h3>
+                    </div>
+                    <div class="sub-modal-trigger" onclick="loadContent('semafor_dokumenty_content.html'); closeModal('modal9')">
+                        <h3>Dokumenty ke stažení</h3>
+                    </div>
+                    <div class="sub-modal-trigger" onclick="loadContent('semafor_FAQ_content.html'); closeModal('modal9')">
+                        <h3>Semafor souhrn</h3>
+                    </div>
+                </div>
+                <div class="modal-btn" onclick="window.location.href = ('semafor_mapa.html'); closeModal('modal9')">
+                    Proces v kostce →
+                </div>
+            </div>
+
+            <!-- Banner stránky se připravují -->
+            <div class="construction-banner">
+                <span class="construction-icon">⚠️</span> 
+                Stránky se připravují 
+                <span class="construction-icon">⚠️</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kontaktní sub-modály -->
+    <div id="sub2-1" class="sub-modal" role="dialog" aria-labelledby="sub2-1-title">
+        <div class="sub-modal-content">
+            <span class="sub-close" onclick="closeSubModal('sub2-1')" aria-label="Zavřít dialog">×</span>
+            <h2 id="sub2-1-title">Fakturační údaje</h2>
+            <strong>Elektroenergetické datové centrum, a.s.</strong><br>
+            Na Hroudě 1492/4
+            100 00 Praha 10 – Vršovice<br> 
+            IČO: 21020264<br>
+            DIČ: CZ21020264<br><br>
+            Bankovní spojení: Komerční banka, a.s.<br>
+            Číslo účtu: 131-1380440247/0100<br>
+            IBAN: CZ96 0100 0001 3113 8044 0247<br>
+            SWIFT: KOMBCZPPXXX<br><br>
+            ID datové schránky: i68u6qe 
+        </div>
+    </div>
+
+    <div id="sub2-2" class="sub-modal" role="dialog" aria-labelledby="sub2-2-title">
+        <div class="sub-modal-content">
+            <span class="sub-close" onclick="closeSubModal('sub2-2')" aria-label="Zavřít dialog">×</span>
+            <h2 id="sub2-2-title">Korespondenční adresa</h2>
+            <strong>Elektroenergetické datové centrum, a.s.</strong><br>
+            Dock In One<br>
+            Voctářova 2449/5<br>
+            180 00 Praha 8 - Libeň<br><br>
+            ID datové schránky: i68u6qe
+        </div>
+    </div>
+
+    <div id="sub2-3" class="sub-modal" role="dialog" aria-labelledby="sub2-3-title">
+        <div class="sub-modal-content">
+            <span class="sub-close" onclick="closeSubModal('sub2-3')" aria-label="Zavřít dialog">×</span>
+            <h2 id="sub2-3-title">Sídlo společnosti</h2>
+            <strong>Elektroenergetické datové centrum, a.s.</strong><br>
+            Na Hroudě 1492/4<br>
+            100 00 Praha 10 – Vršovice<br><br>
+            Zapsáno v OR vedeném Městským soudem v Praze,<br>
+            oddíl B, vložka 28495
+        </div>
+    </div>
+
+    <div id="sub2-4" class="sub-modal" role="dialog" aria-labelledby="sub2-4-title">
+        <div class="sub-modal-content">
+            <span class="sub-close" onclick="closeSubModal('sub2-4')" aria-label="Zavřít dialog">×</span>
+            <h2 id="sub2-4-title">Call centrum EDC</h2>
+            <strong>PO – PÁ: 8:00 – 16:00</strong><br><br>
+            <strong>Volání z ČR:</strong> 800 720 204 <small>(zdarma)</small><br>
+            <strong>Ze zahraničí:</strong> +420 519 799 300 (linka je zpoplatněna)<br><br>
+            <strong>E-mail:</strong> <a href="mailto:info@edc-cr.cz">info@edc-cr.cz</a>
+        </div>
+    </div>
+
+    <div id="sub2-5" class="sub-modal" role="dialog" aria-labelledby="sub2-5-title">
+        <div class="sub-modal-content">
+            <span class="sub-close" onclick="closeSubModal('sub2-5')" aria-label="Zavřít dialog">×</span>
+            <h2 id="sub2-5-title">YouTube kanál EDC</h2>
+            <p style="text-align:center;margin-top:1.5rem;">
+                <a href="https://www.youtube.com/@EDC-CR" target="_blank" rel="noopener"
+                   style="display:inline-flex;align-items:center;gap:10px;color:#0a3d3d;font-weight:600;font-size:1.1rem;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="#ff0000">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 0 6.502C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.75 15.538l0-7.076 6.45 3.538-6.45 3.538z"/>
+                    </svg>
+                    YouTube kanál EDC
+                </a>
+            </p>
+        </div>
+    </div>
+    
+    <div id="sub2-6" class="sub-modal" role="dialog" aria-labelledby="sub2-6-title">
+        <div class="sub-modal-content">
+            <span class="sub-close" onclick="closeSubModal('sub2-6')" aria-label="Zavřít dialog">×</span>
+            <h2 id="sub2-6-title">Workshopy a semináře</h2>
+            <strong>Kontaktní email slouží pro Vaše dotazy k workshopům a seminářím</strong><br><br>
+            <strong>E-mail:</strong> <a href="mailto:ws@edc-cr.cz">ws@edc-cr.cz</a>
+        </div>
+    </div>
+
+    <!-- ====================== JEDEN CENTRÁLNÍ SKRIPT ====================== -->
+    <script>
+        // ====================== GLOBÁLNÍ FUNKCE ======================
+        window.openModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.classList.add('modal-open');
+                setTimeout(() => modal.scrollTop = 0, 100);
+            }
+        };
+
+        window.closeModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+            }
+
+            // Zavře všechny otevřené sub-modály
+            document.querySelectorAll('.sub-modal').forEach(sub => {
+                if (sub.style.display === 'flex' || sub.style.display === 'block') {
+                    sub.style.display = 'none';
+                }
+            });
+        };
+
+        window.openSubModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.style.display = 'flex';
+        };
+
+        window.closeSubModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.style.display = 'none';
+        };
+
+        window.openNewsletterModal = function() {
+            const modal = document.getElementById('newsletterModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.classList.add('modal-open');
+            }
+        };
+
+        window.closeNewsletterModal = function() {
+            const modal = document.getElementById('newsletterModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+            }
+        };
+
+        window.submitNewsletter = async function(e) {
+            e.preventDefault();
+            
+            const emailInput = e.target.querySelector('input[type=email]');
+            const email = emailInput.value.trim();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            if (!email || !email.includes('@')) {
+                alert('Zadejte platný email, prosím.');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Odesílám...';
+
+            try {
+                const response = await fetch('https://connect.mailerlite.com/api/subscribers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + (window.MAILERLITE_API_TOKEN || 'VÁŠ_API_TOKEN_ZDE')
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        groups: ["123456"],
+                        status: "active",
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Děkujeme! Na váš email jsme poslali potvrzovací zprávu.');
+                    closeNewsletterModal();
+                    e.target.reset();
+                } else {
+                    if (data.errors?.[0]?.message?.includes('already subscribed')) {
+                        alert('Tento email je již přihlášen k odběru.');
+                    } else {
+                        alert('Nastala chyba: ' + (data.message || 'zkuste to později'));
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Nepodařilo se připojit k serveru. Zkuste později.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Přihlásit se';
+            }
+        };
+        
+
+        // ====================== NAČÍTÁNÍ OBSAHU ======================
+        window.loadContent = function(path) {
+            console.log('Načítám obsah:', path);
+            fetch(path + '?t=' + Date.now())
+                .then(response => {
+                    if (!response.ok) throw new Error('Soubor nenalezen: ' + path);
+                    return response.text();
+                })
+                .then(html => {
+                    const main = document.getElementById('main-content');
+                    main.innerHTML = html;
+                    initializePageAfterLoad();
+                })
+                .catch(err => {
+                    console.error('Chyba:', err);
+                    document.getElementById('main-content').innerHTML =
+                        '<div class="container"><h2>Obsah se nepodařilo načíst</h2><p>Zkuste obnovit stránku.</p></div>';
+                });
+        };
+
+        function initializePageAfterLoad() {
+            console.log('Inicializace načtené stránky...');
+            
+            // Řazení aktualit od nejnovější
+            const list = document.querySelector('.aktuality-list');
+            if (list) {
+                const rows = Array.from(list.querySelectorAll('.aktualita-row')).reverse();
+                rows.forEach(row => list.appendChild(row));
+                
+                // PŘIDÁNO: Inicializace filtrování podle kategorie
+                const isFAQ = document.querySelector('.faq-category-select') !== null;
+                if (!isFAQ) {
+                    initCategoryFilter();
+                }
+            }
+
+            // Obnovení onclick pro stahování PDF
+            document.querySelectorAll('.modal-trigger[onclick*="download"]').forEach(trigger => {
+                const code = trigger.getAttribute('onclick');
+                if (code) trigger.onclick = new Function('event', code);
+            });
+
+            // Obnovení onclick pro otevírání modálů s videi
+            document.querySelectorAll('.modal-trigger[onclick*="openModal"]').forEach(trigger => {
+                const code = trigger.getAttribute('onclick');
+                if (code) trigger.onclick = new Function(code);
+            });
+            
+            // Automatické generování mapy webu
+            if (document.querySelector('.mapa-webu-section')) {
+                generateSiteMap();
+            }
+
+            // ==================== STÁHNUTÍ SLOVNÍKU (3 sloupce) ====================
+            const downloadDictionary = () => {
+                if (typeof TERMS === 'undefined' || TERMS.length === 0) {
+                    alert('Data slovníku nejsou načtena. Zkuste stránku obnovit.');
+                    return;
+                }
+
+                const rows = ['Term;Full;Text'];
+
+                TERMS.forEach(item => {
+                    const term = (item.term || '').toString().replace(/"/g, '""');
+                    const full = (item.full  || '').toString().replace(/"/g, '""');
+                    const text = (item.text  || '').toString().replace(/"/g, '""');
+
+                    rows.push(`"${term}";"${full}";"${text}"`);
+                });
+
+                const csvContent = '\ufeff' + rows.join('\r\n');
+
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'EDC_energetický_slovník.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            };
+
+            const downloadBtn = document.getElementById('downloadDictionary');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', downloadDictionary);
+            }
+
+            function generateSiteMap() {
+                const mapDiv = document.getElementById('auto-site-map');
+                if (!mapDiv) return;
+
+                mapDiv.innerHTML = `
+                    <ul class="site-map-tree">
+                        <li>
+                            <span onclick="window.loadContent && window.loadContent('index_content.html')">Domovská stránka</span>
+                            <ul>
+                                <li>
+                                    <span onclick="openModal('modal1')">O společnosti</span>
+                                    <ul>
+                                        <li onclick="window.loadContent && window.loadContent('aktuality_content.html'); closeModal('modal1')">
+                                            Aktuality a tiskové zprávy
+                                        </li>
+                                        <li onclick="window.loadContent && window.loadContent('struktura_spolecnosti_content.html'); closeModal('modal1')">
+                                            Struktury společnosti
+                                        </li>
+                                        <li onclick="window.loadContent && window.loadContent('povinna-sdeleni_content.html'); closeModal('modal1')">
+                                            Povinná sdělení
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <span onclick="openModal('modal2')">Kontakty</span>
+                                    <ul>
+                                        <li onclick="openModal('modal2'); setTimeout(() => openSubModal('sub2-1'), 150)">Fakturační údaje</li>
+                                        <li onclick="openModal('modal2'); setTimeout(() => openSubModal('sub2-2'), 150)">Korespondenční adresa</li>
+                                        <li onclick="openModal('modal2'); setTimeout(() => openSubModal('sub2-3'), 150)">Sídlo společnosti</li>
+                                        <li onclick="openModal('modal2'); setTimeout(() => openSubModal('sub2-4'), 150)">Call centrum EDC</li>
+                                        <li onclick="openModal('modal2'); setTimeout(() => openSubModal('sub2-5'), 150)">YouTube kanál EDC</li>
+                                        <li onclick="openModal('modal2'); setTimeout(() => openSubModal('sub2-6'), 150)">Workshopy a semináře</li>
+                                    </ul>
+                                </li>
+                                <li onclick="window.loadContent && window.loadContent('kariera_content.html')">Kariéra</li>
+                                <li onclick="window.loadContent && window.loadContent('interoperabilita_content.html')">Interoperabilita dat</li>
+                                <li>
+                                    <span onclick="openModal('modal5')">M2M komunikace</span>
+                                    <ul>
+                                        <li onclick="window.loadContent && window.loadContent('M2M_sdileni_content.html'); closeModal('modal5')">
+                                            M2M komunikace sdílení, akumulace
+                                        </li>
+                                        <li onclick="window.loadContent && window.loadContent('M2M_semafor_content.html'); closeModal('modal5')">
+                                            M2M komunikace síťový semafor
+                                        </li>
+                                        <li onclick="window.loadContent && window.loadContent('M2M_flexibilita_content.html'); closeModal('modal5')">
+                                            M2M komunikace agregace, technická flexibilita
+                                        </li>
+                                        <li onclick="window.loadContent && window.loadContent('M2M_content.html'); closeModal('modal5')">
+                                            Více informací (hlavní stránka M2M)
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <span onclick="openModal('modal6')">Sdílení</span>
+                                    <ul>
+                                        <li onclick="window.loadContent && window.loadContent('sdileni_video_content.html'); closeModal('modal6')">Videomanuály</li>
+                                        <li onclick="window.loadContent && window.loadContent('sdileni_dokumenty_content.html'); closeModal('modal6')">Dokumenty ke stažení</li>
+                                        <li onclick="window.loadContent && window.loadContent('sdileni_FAQ_content.html'); closeModal('modal6')">Sdílení souhrn</li>
+                                        <li onclick="window.location.href =('sdileni_mapa.html'); closeModal('modal6')">Proces sdílení v kostce</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <span onclick="openModal('modal7')">Akumulace</span>
+                                    <ul>
+                                        <li onclick="window.loadContent && window.loadContent('akumulace_video_content.html'); closeModal('modal7')">Videomanuály</li>
+                                        <li onclick="window.loadContent && window.loadContent('akumulace_dokumenty_content.html'); closeModal('modal7')">Dokumenty ke stažení</li>
+                                        <li onclick="window.loadContent && window.loadContent('akumulace_FAQ_content.html'); closeModal('modal7')">Akumulace souhrn</li>
+                                        <li onclick="window.loadContent && window.loadContent('akumulace_content.html'); closeModal('modal7')">Více informací</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <span onclick="openModal('modal8')">Flexibilita</span>
+                                    <ul>
+                                        <li onclick="window.loadContent && window.loadContent('flexibilita_video_content.html'); closeModal('modal8')">Videomanuály</li>
+                                        <li onclick="window.loadContent && window.loadContent('flexibilita_dokumenty_content.html'); closeModal('modal8')">Dokumenty ke stažení</li>
+                                        <li onclick="window.loadContent && window.loadContent('flexibilita_FAQ_content.html'); closeModal('modal8')">Flexibilita souhrn</li>
+                                        <li onclick="window.loadContent && window.loadContent('flexibilita_content.html'); closeModal('modal8')">Více informací</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <span onclick="openModal('modal9')">Síťový semafor</span>
+                                    <ul>
+                                        <li onclick="window.loadContent && window.loadContent('semafor_video_content.html'); closeModal('modal9')">Videomanuály</li>
+                                        <li onclick="window.loadContent && window.loadContent('semafor_dokumenty_content.html'); closeModal('modal9')">Dokumenty ke stažení</li>
+                                        <li onclick="window.loadContent && window.loadContent('semafor_FAQ_content.html'); closeModal('modal9')">Semafor souhrn</li>
+                                        <li onclick="window.location.href =('semafor_mapa.html'); closeModal('modal9')">Proces v kostce</li>
+                                    </ul>
+                                </li>
+                                <li onclick="window.loadContent && window.loadContent('slovnik_content.html')">EDC slovník energetiky</li>
+                                <li onclick="window.loadContent && window.loadContent('FAQ_content.html')">FAQ</li>
+                                <li onclick="window.loadContent && window.loadContent('workshop_content.html')">EDC-informace</li>
+                                <li onclick="window.loadContent && window.loadContent('statistiky_content.html')">EDC - statistiky</li>
+                            </ul>
+                        </li>
+                    </ul>
+                `;
+            }
+
+            // Scroll na začátek stránky
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // SPECIFICKÉ SKRIPTY – FAQ STRÁNKA
+            const faqDropdownBtn = document.querySelector('.faq-dropdown-btn');
+            if (faqDropdownBtn) {
+                const faqDropdown = document.querySelector('.faq-dropdown');
+                
+                faqDropdownBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    faqDropdown.classList.toggle('active');
+                });
+                
+                document.querySelectorAll('.faq-dropdown-content a').forEach(function (link) {
+                    link.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const href = this.getAttribute('href');
+                        const targetId = href.substring(1);
+                        const targetElement = document.getElementById(targetId);
+
+                        if (targetElement) {
+                            document.querySelectorAll('.aktualita-row').forEach(row => row.classList.remove('highlight'));
+                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            targetElement.classList.add('highlight');
+                            faqDropdown.classList.remove('active');
+                            
+                            setTimeout(() => {
+                                targetElement.classList.remove('highlight');
+                            }, 3000);
+                        }
+                    });
+                });
+                
+                document.addEventListener('click', function (e) {
+                    if (faqDropdown.classList.contains('active') && 
+                        !faqDropdown.contains(e.target)) {
+                        faqDropdown.classList.remove('active');
+                    }
+                });
+                
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && faqDropdown.classList.contains('active')) {
+                        faqDropdown.classList.remove('active');
+                    }
+                });
+    
+                // Kategorie FAQ
+                (function () {
+                    const categoryWrapper = document.querySelector('.faq-category-select');
+                    if (!categoryWrapper) return;
+
+                    const btnToggle = categoryWrapper.querySelector('.faq-category-btn');
+                    const categoryButtons = categoryWrapper.querySelectorAll('[data-faq-category]');
+                    const rows = document.querySelectorAll('.aktualita-row');
+                    const faqLinks = document.querySelectorAll('.faq-dropdown-content a');
+
+                    btnToggle.addEventListener('click', function () {
+                        categoryWrapper.classList.toggle('active');
+                    });
+
+                    categoryButtons.forEach(function (catBtn) {
+                        catBtn.addEventListener('click', function () {
+                            const selected = this.getAttribute('data-faq-category');
+                            btnToggle.textContent = this.textContent;
+
+                            rows.forEach(function (row) {
+                                const cat = row.getAttribute('data-category') || 'all';
+                                row.style.display = (selected === 'all' || cat === selected) ? '' : 'none';
+                                row.classList.remove('highlight');
+                            });
+
+                            faqLinks.forEach(function (link) {
+                                const linkCat = link.getAttribute('data-category') || 'all';
+                                link.style.display = (selected === 'all' || linkCat === selected) ? 'flex' : 'none';
+                            });
+
+                            categoryWrapper.classList.remove('active');
+                        });
+                    });
+
+                    document.addEventListener('click', function (e) {
+                        if (!categoryWrapper.contains(e.target)) {
+                            categoryWrapper.classList.remove('active');
+                        }
+                    });
+                })();
+            }
+
+            // SPECIFICKÉ SKRIPTY – SLOVNÍK ENERGETIKY
+            const slovnikSearch = document.getElementById('slovnikSearch');
+            if (slovnikSearch) {
+                const letterButtons = document.querySelectorAll('.letter-btn');
+                const modal = document.getElementById('slovnikModal');
+                const modalClose = document.getElementById('slovnikModalClose');
+                const modalInner = modal ? modal.querySelector('.modal-inner') : null;
+
+                if (!modal || !modalInner) return;
+                
+                let activeLetter = 'vse';
+                
+
+                function showResults() {
+                    if (!window.TERMS || window.TERMS.length === 0) {
+                        modalInner.innerHTML = '<p style="text-align:center; font-size:1.2rem; color: #721c24;">Data slovníku nejsou k dispozici. Zkuste obnovit stránku.</p>';
+                        modal.style.display = 'flex';
+                        document.body.classList.add('modal-open');
+                        return;
+                    }
+
+                    const query = (slovnikSearch.value || '').trim().toLowerCase();
+
+                    const filtered = window.TERMS.filter(item => {
+                        const matchLetter = activeLetter === 'vse' || item.letter === activeLetter;
+                        const haystack = (item.term + ' ' + (item.full || '') + ' ' + item.text).toLowerCase();
+                        const matchSearch = !query || haystack.includes(query);
+                        return matchLetter && matchSearch;
+                    });
+
+                    modalInner.innerHTML = '';
+
+                    if (filtered.length === 0) {
+                        modalInner.innerHTML = '<p style="text-align:center; font-size:1.2rem;">Pro zadané filtrování nebyl nalezen žádný pojem.</p>';
+                    } else {
+                        const countText = filtered.length === 1 ? '1 výsledek' : `${filtered.length} výsledky`;
+                        modalInner.innerHTML = `<h2 style="text-align:center; margin-bottom:2rem;">Nalezeno: ${countText}</h2>`;
+
+                        filtered.forEach(item => {
+                            const itemHTML = `
+                                <div class="slovnik-result-item">
+                                    <div class="slovnik-result-header">
+                                        <div>
+                                            <strong>${item.term}</strong>
+                                            ${item.full ? '<span class="full-text">– ' + item.full + '</span>' : ''}
+                                        </div>
+                                        <span class="slovnik-arrow">▼</span>
+                                    </div>
+                                    <div class="slovnik-result-body">
+                                        <p>${item.text}</p>
+                                    </div>
+                                </div>
+                            `;
+                            modalInner.insertAdjacentHTML('beforeend', itemHTML);
+                        });
+                    }
+
+                    modal.style.display = 'flex';
+                    document.body.classList.add('modal-open');
+                }
+
+                function closeModalFunc() {
+                    modal.style.display = 'none';
+                    document.body.classList.remove('modal-open');
+                }
+
+                modalClose.addEventListener('click', closeModalFunc);
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModalFunc();
+                });
+
+                    letterButtons.forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            if (!window.TERMS || window.TERMS.length === 0) {
+                                alert('Slovník není načten. Obnovte stránku prosím.');
+                                return;
+                            }
+                            
+                            // 1. Odebrat aktivní stav a efekty ze všech tlačítek
+                            letterButtons.forEach(b => {
+                                b.classList.remove('active');
+                                b.classList.remove('flash-effect');
+                                // Reset animace
+                                b.style.animation = 'none';
+                                void b.offsetWidth; // Force reflow
+                                b.style.animation = null;
+                            });
+                            
+                            // 2. Přidat flash efekt na kliknuté tlačítko
+                            this.classList.add('flash-effect');
+                            
+                            // 3. Nastavit aktivní stav po dokončení animace
+                            setTimeout(() => {
+                                this.classList.remove('flash-effect');
+                                this.classList.add('active');
+                            }, 700); // Časování podle délky animace (0.7s)
+                            
+                            // 4. Aktualizovat výběr a zobrazit výsledky
+                            activeLetter = this.dataset.letter;
+                            
+                            // 5. Zpožděné zobrazení výsledků (pro lepší UX)
+                            setTimeout(() => {
+                                showResults();
+                            }, 350); // Polovina animace flash efektu
+                        });
+                    });
+
+                slovnikSearch.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (!window.TERMS || window.TERMS.length === 0) {
+                            alert('Slovník není načten. Obnovte stránku prosím.');
+                            return;
+                        }
+                        showResults();
+                    }
+                });
+
+                modalInner.addEventListener('click', (e) => {
+                    const header = e.target.closest('.slovnik-result-header');
+                    if (!header) return;
+
+                    const item = header.parentElement;
+                    const body = item.querySelector('.slovnik-result-body');
+                    const arrow = header.querySelector('.slovnik-arrow');
+
+                    item.classList.toggle('open');
+                    if (item.classList.contains('open')) {
+                        body.style.maxHeight = body.scrollHeight + 'px';
+                        arrow.textContent = '▲';
+                    } else {
+                        body.style.maxHeight = '0';
+                        arrow.textContent = '▼';
+                    }
+                });
+            
+            // --- EFEKT BLIKÁNÍ PRO TLAČÍTKA PÍSMEN ---
+                const letters = document.querySelectorAll('.letter-btn');
+                letters.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        // Přidáme třídu pro bliknutí
+                        this.classList.add('is-clicked');
+                        
+                        // Po 400ms (délka animace) třídu odebereme, aby se dala použít znovu
+                        setTimeout(() => {
+                            this.classList.remove('is-clicked');
+                        }, 400);
+                    });
+                });
+            }
+            // ====================== FUNKCE PRO FILTROVÁNÍ AKTUALIT ======================
+            function initCategoryFilter() {
+                const aktualitySection = document.querySelector('.aktuality');
+                if (!aktualitySection) return;
+
+                const h1 = aktualitySection.querySelector('h1');
+                if (!h1) return;
+
+                const filterContainer = document.createElement('div');
+                filterContainer.className = 'category-filter-container';
+                filterContainer.style.margin = '0 auto 3rem auto';
+                filterContainer.style.maxWidth = '1200px';
+                filterContainer.style.textAlign = 'center';
+
+                const dropdownHTML = `
+                    <div class="aktuality-category-select" style="display: inline-block; margin: 0 auto; position: relative;">
+                        <button class="aktuality-category-btn" aria-expanded="false" 
+                                style="background-color: #f8f9fa; color: #333; padding: 14px 20px; 
+                                       font-size: 16px; font-weight: 600; border: 1px solid #ddd;
+                                       border-radius: 6px; cursor: pointer; text-align: left;
+                                       min-width: 250px; position: relative;">
+                            Všechny kategorie
+                            <span style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);">▼</span>
+                        </button>
+                        <div class="aktuality-category-content" 
+                             style="display: none; position: absolute; background: white; 
+                                    min-width: 250px; box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+                                    border-radius: 14px; z-index: 20; margin-top: 8px;
+                                    border: 1px solid #e4e7ec; padding: 6px 0; left: 0; right: 0;">
+                            <button data-category="all" style="width: 100%; border: none; background: transparent;
+                                    text-align: left; padding: 10px 16px; font-size: 15px; color: #101828;
+                                    cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                <span style="color: #94e3c2; font-size: 8px;">●</span>
+                                Všechny kategorie
+                            </button>
+                            <button data-category="Tisková zpráva EDC" style="width: 100%; border: none; background: transparent;
+                                    text-align: left; padding: 10px 16px; font-size: 15px; color: #101828;
+                                    cursor: pointer; display: flex; align-items: center; gap: 6px; border-top: 1px solid #f1f3f5;">
+                                <span style="color: #94e3c2; font-size: 8px;">●</span>
+                                Tisková zpráva EDC
+                            </button>
+                            <button data-category="Mediální výstup" style="width: 100%; border: none; background: transparent;
+                                    text-align: left; padding: 10px 16px; font-size: 15px; color: #101828;
+                                    cursor: pointer; display: flex; align-items: center; gap: 6px; border-top: 1px solid #f1f3f5;">
+                                <span style="color: #94e3c2; font-size: 8px;">●</span>
+                                Mediální výstup
+                            </button>
+                            <button data-category="Událost" style="width: 100%; border: none; background: transparent;
+                                    text-align: left; padding: 10px 16px; font-size: 15px; color: #101828;
+                                    cursor: pointer; display: flex; align-items: center; gap: 6px; border-top: 1px solid #f1f3f5;">
+                                <span style="color: #94e3c2; font-size: 8px;">●</span>
+                                Událost
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                filterContainer.innerHTML = dropdownHTML;
+                
+                h1.insertAdjacentElement('afterend', filterContainer);
+
+                const dropdown = filterContainer.querySelector('.aktuality-category-select');
+                const btn = dropdown.querySelector('.aktuality-category-btn');
+                const content = dropdown.querySelector('.aktuality-category-content');
+                const categoryButtons = content.querySelectorAll('button[data-category]');
+
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('active');
+                    content.style.display = dropdown.classList.contains('active') ? 'block' : 'none';
+                    this.setAttribute('aria-expanded', dropdown.classList.contains('active'));
+                });
+
+                categoryButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const category = this.getAttribute('data-category');
+                        
+                        btn.textContent = this.textContent.trim();
+                        
+                        const rows = document.querySelectorAll('.aktualita-row');
+                        rows.forEach(row => {
+                            const rowCategory = row.getAttribute('data-category') || 
+                                               row.querySelector('.aktualita-category')?.textContent?.trim() || 
+                                               '';
+                            
+                            if (category === 'all' || rowCategory === category) {
+                                row.style.display = '';
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        });
+
+                        dropdown.classList.remove('active');
+                        content.style.display = 'none';
+                        btn.setAttribute('aria-expanded', 'false');
+
+                        aktualitySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    });
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove('active');
+                        content.style.display = 'none';
+                        btn.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && dropdown.classList.contains('active')) {
+                        dropdown.classList.remove('active');
+                        content.style.display = 'none';
+                        btn.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+
+            // ====================== COOKIE BANNER ======================
+            function setCookie(name, value, days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+            }
+
+            function getCookie(name) {
+                const matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
+                return matches ? decodeURIComponent(matches[1]) : undefined;
+            }
+
+            const banner = document.getElementById('cookie-banner');
+            if (banner && !getCookie('cookie_consent')) {
+                banner.style.display = 'block';
+            }
+
+            document.getElementById('accept-all')?.addEventListener('click', () => {
+                setCookie('cookie_consent', 'all', 365);
+                if (banner) banner.style.display = 'none';
+            });
+
+            document.getElementById('necessary-only')?.addEventListener('click', () => {
+                setCookie('cookie_consent', 'necessary', 365);
+                if (banner) banner.style.display = 'none';
+            });
+
+            document.getElementById('reject-all')?.addEventListener('click', () => {
+                setCookie('cookie_consent', 'rejected', 365);
+                if (banner) banner.style.display = 'none';
+            });
+        }
+
+        // ====================== HLAVNÍ INICIALIZACE ======================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM načten, inicializace aplikace...');
+            
+            // Kontrola, jestli intro už bylo viděno
+            if (!localStorage.getItem('edc_intro_seen')) {
+                localStorage.setItem('edc_intro_seen', 'true');
+                window.location.replace('edc_intro.html');
+                return; // Ukončíme, protože přesměrujeme
+            }
+            
+            // Načtení obsahu podle URL
+            const filename = window.location.pathname.split('/').pop() || 'index.html';
+            const hash = window.location.hash.substring(1);
+
+            let contentPath = 'index_content.html';
+
+            const contentMap = {
+                'index.html': 'index_content.html',
+                'aktuality.html': 'aktuality_content.html',
+                'kariera.html': 'kariera_content.html',
+                'FAQ.html': 'faq_content.html',
+                'interoperabilita.html': 'interoperabilita_content.html',
+                'slovnik.html': 'slovnik_content.html',
+                'akumulace.html': 'akumulace_content.html',
+                'akumulace-dokumenty.html': 'akumulace_dokumenty_content.html',
+                'akumulace-video.html': 'akumulace_video_content.html',
+                'akumulace-faq.html': 'akumulace_faq_content.html'
+            };
+
+            if (contentMap[filename]) {
+                contentPath = contentMap[filename];
+            }
+
+            if (hash && contentMap[hash + '.html']) {
+                contentPath = contentMap[hash + '.html'];
+            }
+
+            console.log('Načítám obsah:', contentPath);
+            
+            // Načtení hlavního obsahu
+            window.loadContent(contentPath);
+        });
+
+
+        // Jednoduchá historie pro SPA
+        let pageHistory = ['index_content.html']; // Výchozí stránka
+        let historyIndex = 0;
+
+        // Přepsat loadContent pro sledování historie
+        const oldLoadContent = window.loadContent;
+        window.loadContent = function(path) {
+            console.log('Načítám s historií:', path);
+            
+            // Přidat do historie jen pokud není aktuální
+            if (pageHistory[historyIndex] !== path) {
+                pageHistory = pageHistory.slice(0, historyIndex + 1);
+                pageHistory.push(path);
+                historyIndex = pageHistory.length - 1;
+            }
+            
+            return oldLoadContent(path);
+        };
+
+        // Šipky pro SPA historii
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    oldLoadContent(pageHistory[historyIndex]);
+                } else if (window.history.length > 1) {
+                    window.history.back();
+                }
+            }
+            else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                if (historyIndex < pageHistory.length - 1) {
+                    historyIndex++;
+                    oldLoadContent(pageHistory[historyIndex]);
+                } else if (window.history.length > 1) {
+                    window.history.forward();
+                }
+            }
+        });
+        // Spustit animaci rolet po načtení stránky
+        document.addEventListener('DOMContentLoaded', function() {
+            // Čekat 500ms na plné načtení (pro lepší UX)
+            setTimeout(function() {
+                document.body.classList.add('loaded');
+            }, 500);
+        });
+
+        // Scroll-to-top funkce
+        document.addEventListener('DOMContentLoaded', function () {
+            const scrollBtn = document.getElementById('scroll-to-top');
+            if (!scrollBtn) return;
+
+            const showThreshold = 400;           // po kolika px se zobrazí
+
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > showThreshold) {
+                    scrollBtn.classList.add('visible');
+                } else {
+                    scrollBtn.classList.remove('visible');
+                }
+            });
+
+            scrollBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'          // plynulý scroll nahoru
+                });
+            });
+
+            // Pro jistotu – pokud je stránka dlouhá a uživatel refreshne dole
+            if (window.scrollY > showThreshold) {
+                scrollBtn.classList.add('visible');
+            }
+        });
+
+    </script>
+
+        <!-- Header, footer a chatbot -->
+    <script src="js/include.js" defer></script>
+
+    <!-- ====================== BOČNÍ PANEL - ENERGETICKÉ SPOLEČNOSTI ====================== -->
+<button class="side-panel-toggle" onclick="toggleSidePanel()" aria-label="Otevřít energetické informace">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="#0a3d3d">
+        <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+    </svg>
+</button>
+
+<aside class="side-panel" id="sidePanel">
+    <button class="side-panel-close" onclick="closeSidePanel()" aria-label="Zavřít panel">
+        ×
+    </button>
+    
+    <!-- Loga energetických společností -->
+    <div class="energy-logos">
+        <div class="logos-grid">
+            <a href="https://www.cezdistribuce.cz/" target="_blank" rel="noopener" class="logo-item">
+                <img src="loga/cez.png" alt="ERÚ" class="logo-img cezdi">
+                <span>ČEZ Distribuce</span>
+            </a>
+            <a href="https://www.pre.cz" target="_blank" rel="noopener" class="logo-item">
+                <img src="loga/pre.png" alt="ERÚ" class="logo-img pre">
+                <span>Pražská energetika</span>
+            </a>
+            <a href="https://www.egd.cz/" target="_blank" rel="noopener" class="logo-item">
+                <img src="loga/egd.png" alt="ERÚ" class="logo-img egd">
+                <span>E.ON Distribuce</span>
+            </a>
+            <a href="https://www.ceps.cz" target="_blank" rel="noopener" class="logo-item">
+                <img src="loga/ceps.png" alt="ERÚ" class="logo-img ceps">
+                <span>Česká přenosová soustava</span>
+            </a>
+            <a href="https://www.ote-cr.cz/cs" target="_blank" rel="noopener" class="logo-item">
+                <img src="loga/ote.png" alt="ERÚ" class="logo-img ote">
+                <span>OTE</span>
+            </a>
+            <a href="https://eru.gov.cz/" target="_blank" rel="noopener" class="logo-item">
+                <img src="loga/eru.png" alt="ERÚ" class="logo-img eru">
+                <span>ERÚ</span>
+            </a>
+        </div>
+    </div>
+</aside>
+
+        <!-- FULLSCREEN PŘEHLED – VŠE FUNGUJE (tlačítka, submodály, loadContent atd.) -->
+        <div id="all-sections-fullscreen" style="display:none; position:fixed; inset:0; background:#0a1f3d; z-index:99999; overflow-y:auto; padding:40px 20px; color:white;">
+            <button class="fs-close-x" onclick="closeAllSectionsFullscreen()" 
+                    style="position:fixed; top:20px; right:30px; font-size:50px; width:80px; height:80px; background:rgba(0,0,0,0.6); border:none; border-radius:50%; cursor:pointer; color:white; z-index:100000;">
+                ×
+            </button>
+
+            <div style="max-width:1440px; margin:0 auto;">
+                <h1 style="text-align:center; margin-bottom:60px; font-size:2.8rem; color:#05282a;">
+                    Přehled všech sekcí EDC
+                </h1>
+                <div id="fs-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:40px 30px;"></div>
+            </div>
+        </div>
+
+        <script>
+            function showAllSectionsFullscreen() {
+                const grid = document.getElementById('fs-grid');
+                grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; font-size:1.5rem; color:#64748b; padding:100px 0;">Připravuji přehled...</p>';
+
+                const triggers = document.querySelectorAll('.modals-section .modal-trigger');
+                
+                if (triggers.length === 0) {
+                    grid.innerHTML = '<p style="color:#fca5a5;">Dlaždice nenalezeny</p>';
+                    return;
+                }
+
+                grid.innerHTML = '';
+
+                triggers.forEach(original => {
+                    const clone = original.cloneNode(true);
+                    const wrapper = document.createElement('div');
+
+                    // ────────────────────────────────────────────────
+                    // KLÍČOVÁ ÚPRAVA – přidáme zavírání fullscreenu
+                    // ────────────────────────────────────────────────
+                    wrapper.onclick = function(e) {
+                        // Nejdřív zavřeme fullscreen
+                        closeAllSectionsFullscreen();
+
+                        // Pak spustíme původní akci (loadContent, openModal, atd.)
+                        const originalClick = original.onclick;
+                        if (originalClick) {
+                            originalClick.call(original, e);   // zachová this a event
+                        } else if (original.getAttribute('onclick')) {
+                            // fallback pro inline onclick
+                            new Function(original.getAttribute('onclick')).call(original, e);
+                        }
+                    };
+
+                    wrapper.style.cursor = 'pointer';
+                    wrapper.innerHTML = clone.innerHTML;
+
+                    grid.appendChild(wrapper);
+                });
+
+                document.getElementById('all-sections-fullscreen').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeAllSectionsFullscreen() {
+                const fs = document.getElementById('all-sections-fullscreen');
+                if (fs) {
+                    fs.style.display = 'none';
+                }
+                document.body.style.overflow = '';
+            }
+        </script>
+
+
+
+<!-- pRO SPUŠTĚNÍ HLÁŠKY NEDOSTUPNOSTI JE NUTNÉ ODKOMENTOVAT BOLÁNÍ !!!!!!!!BANNER NEDSOTUPNOST!!!!!!!!!!!
+    <script src="js/banner.js" defer></script>-->
+
+    <script src="js/side-panel.js" defer></script>
+
+
+    <!-- Scroll to top button -->
+    <a href="#" id="scroll-to-top" aria-label="Zpět nahoru" title="Zpět na začátek stránky">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 19V5M5 12l7-7 7 7"/>
+        </svg>
+    </a>
+</body>
+</html>
