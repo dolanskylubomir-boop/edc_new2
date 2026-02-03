@@ -12,7 +12,7 @@
       position: relative;
       width: 100vw;
       height: 100vh;
-      height: 100dvh; /* Pro moderní prohlížeče */
+      height: 100dvh;
       background: black;
     }
 
@@ -29,33 +29,12 @@
       object-position: center;
     }
 
-    /* Responzivní úpravy pro mobil */
     @media (orientation: portrait) {
-      .intro video {
-        width: auto;
-        height: 100%;
-      }
+      .intro video { width: auto; height: 100%; }
     }
 
     @media (orientation: landscape) {
-      .intro video {
-        width: 100%;
-        height: auto;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .intro video {
-        object-fit: cover;
-      }
-      
-      /* Pro velmi malé výšky */
-      @media (max-height: 500px) {
-        .intro video {
-          object-fit: contain;
-          background: black;
-        }
-      }
+      .intro video { width: 100%; height: auto; }
     }
 
     .overlay {
@@ -87,6 +66,48 @@
       color: rgb(148, 227, 194);
     }
 
+    .controls-bottom {
+      position: absolute;
+      bottom: 30px;
+      left: 30px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 20px; /* zvětšená mezera mezi zvukem a odpočtem */
+      flex-wrap: wrap;
+    }
+
+    .btn-control {
+      display: inline-block;
+      padding: 10px 20px;
+      border: 2px solid #ffffff;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(0,0,0,0.35);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+    }
+
+    .btn-control:hover,
+    .btn-control.active {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    .countdown {
+      padding: 10px 20px;
+      background: rgba(0,0,0,0.35);
+      border-radius: 4px;
+      color: white;
+      font-size: 1rem;
+      white-space: nowrap; /* zabrání zalomení textu */
+    }
+
     .skip {
       position: absolute;
       bottom: 30px;
@@ -94,107 +115,40 @@
       z-index: 10;
     }
 
-    .skip a {
-      display: inline-block;
-      padding: 12px 26px;
-      border: 2px solid #ffffff;
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 0.95rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: all 0.3s ease;
-      background: rgba(0,0,0,0.35);
-    }
-
-    .skip a:hover {
-      background: #ffffff;
-      color: #000000;
-    }
-
-    .countdown {
-      position: absolute;
-      bottom: 30px;
-      left: 30px;
-      z-index: 10;
-      color: white;
-      font-size: 1rem;
-      background: rgba(0,0,0,0.35);
-      padding: 10px 20px;
-      border-radius: 4px;
-    }
-
-    /* Responzivní úpravy pro mobily */
+    /* Responzivní úpravy */
     @media (max-width: 768px) {
-      .overlay {
-        padding: 1rem;
-        padding-top: 15vh;
-      }
+      .overlay { padding: 1rem; padding-top: 15vh; }
+      .overlay h1 { font-size: clamp(1.5rem, 5vw, 2.5rem); margin-bottom: 0.5rem; }
+      .overlay p { font-size: clamp(1rem, 3vw, 1.4rem); }
       
-      .overlay h1 {
-        font-size: clamp(1.5rem, 5vw, 2.5rem);
-        margin-bottom: 0.5rem;
-      }
+      .controls-bottom, .skip { bottom: 20px; }
+      .controls-bottom { left: 20px; gap: 16px; }
+      .skip { right: 20px; }
       
-      .overlay p {
-        font-size: clamp(1rem, 3vw, 1.4rem);
-      }
-      
-      .skip, .countdown {
-        bottom: 20px;
-      }
-      
-      .skip {
-        right: 20px;
+      .btn-control {
+        padding: 8px 16px;
+        font-size: 0.85rem;
       }
       
       .countdown {
-        left: 20px;
-        font-size: 0.9rem;
         padding: 8px 16px;
-      }
-      
-      .skip a {
-        padding: 10px 20px;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
       }
     }
 
     @media (max-width: 480px) {
-      .overlay {
-        padding-top: 20vh;
-      }
+      .controls-bottom, .skip { bottom: 15px; }
+      .controls-bottom { left: 15px; gap: 14px; }
+      .skip { right: 15px; }
       
-      .skip, .countdown {
-        bottom: 15px;
-      }
-      
-      .skip {
-        right: 15px;
+      .btn-control {
+        padding: 7px 14px;
+        font-size: 0.8rem;
       }
       
       .countdown {
-        left: 15px;
-        font-size: 0.8rem;
         padding: 6px 12px;
-      }
-      
-      .skip a {
-        padding: 8px 16px;
         font-size: 0.8rem;
-      }
-    }
-
-    /* Pro horizontální orientaci na mobilech */
-    @media (max-width: 768px) and (orientation: landscape) {
-      .overlay {
-        padding-top: 5vh;
-      }
-      
-      .intro video {
-        object-fit: cover;
-        width: 100%;
-        height: auto;
       }
     }
   </style>
@@ -202,8 +156,7 @@
 <body>
 
   <div class="intro">
-    <!-- Video – nahraď soubor přesně podle přílohy -->
-    <video autoplay muted loop playsinline>
+    <video autoplay muted loop playsinline id="introVideo">
       <source src="EDC intro.mp4" type="video/mp4" />
       Váš prohlížeč nepodporuje video.
     </video>
@@ -213,12 +166,13 @@
       <p>Budoucnost energetiky začíná u nás</p>
     </div>
 
-    <div class="countdown" id="countdown">
-      Přesměrování za: 6s
+    <div class="controls-bottom">
+      <div class="btn-control" id="soundBtn">Zapnout zvuk</div>
+      <div class="countdown" id="countdown">Přesměrování za: 6s</div>
     </div>
 
     <div class="skip">
-      <a href="index.html" id="skipLink">Přeskočit intro</a>
+      <a href="index.html" id="skipLink" class="btn-control">Přeskočit intro</a>
     </div>
   </div>
 
@@ -226,6 +180,8 @@
     let seconds = 6;
     let countdownInterval;
 
+    const video = document.getElementById('introVideo');
+    const soundBtn = document.getElementById('soundBtn');
     const countdownElement = document.getElementById('countdown');
     const skipLink = document.getElementById('skipLink');
 
@@ -233,22 +189,41 @@
         countdownElement.textContent = `Přesměrování za: ${seconds}s`;
 
         if (seconds <= 0) {
-            // Čisté přesměrování bez parametrů a bez historie
             window.location.replace('index.html');
         } else {
             seconds--;
         }
     }
 
-    // Spustíme odpočet
     countdownInterval = setInterval(updateCountdown, 1000);
 
-    // Ruční přeskočení
     skipLink.addEventListener('click', (e) => {
         e.preventDefault();
-        clearInterval(countdownInterval); // Zastavíme odpočet
+        clearInterval(countdownInterval);
         window.location.replace('index.html');
     });
+
+    soundBtn.addEventListener('click', () => {
+        if (video.muted) {
+            video.muted = false;
+            soundBtn.textContent = "Vypnout zvuk";
+            soundBtn.classList.add('active');
+        } else {
+            video.muted = true;
+            soundBtn.textContent = "Zapnout zvuk";
+            soundBtn.classList.remove('active');
+        }
+    });
+
+    // První interakce – zapne zvuk (pomáhá na mobilních prohlížečích)
+    document.addEventListener('click', function enableAudio() {
+        if (video.muted) {
+            video.muted = false;
+            soundBtn.textContent = "Vypnout zvuk";
+            soundBtn.classList.add('active');
+        }
+        document.removeEventListener('click', enableAudio);
+    }, { once: true });
 </script>
 
 </body>
