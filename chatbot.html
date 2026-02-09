@@ -57,6 +57,14 @@
         <div id="tereza-typing" class="tereza-typing"><span></span><span></span><span></span></div>
         <div class="tereza-input">
             <input type="text" id="tereza-input" placeholder="Napište zprávu…" autocomplete="off">
+            
+            <button id="tereza-mic" title="Hlasové zadávání">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                    <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                </svg>
+            </button>
+
             <button id="tereza-send" title="Odeslat">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
                     <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z"/>
@@ -84,7 +92,7 @@
         100% { background-color: #ffeb3b; }
     }
 
-    /* --- ZÁKLADNÍ POZICE A TLAČÍTKO --- */
+    /* --- HLAVNÍ STRUKTURA --- */
     .tereza-wrapper {
         position: fixed;
         bottom: 20px;
@@ -108,15 +116,8 @@
         pointer-events: auto; 
     }
 
-    .tereza-toggle:hover {
-        transform: scale(1.1);
-    }
-
-    .tereza-toggle img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+    .tereza-toggle:hover { transform: scale(1.1); }
+    .tereza-toggle img { width: 100%; height: 100%; object-fit: cover; }
 
     .tereza-pulse-ring {
         position: absolute;
@@ -128,12 +129,12 @@
     }
     @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
 
-    /* --- HLAVNÍ OKNO CHATU --- */
+    /* --- OKNO CHATU --- */
     #tereza-chat {
         position: fixed;
         bottom: 100px;
         right: 20px;
-        width: 420px;
+        width: 600px;
         max-width: calc(100vw - 40px);
         height: 600px;
         max-height: 80vh;
@@ -141,7 +142,7 @@
         border-radius: 20px;
         box-shadow: 0 5px 25px rgba(0,0,0,0.2);
         display: none !important;
-        flex-direction: column;
+        flex-direction: row;
         overflow: hidden;
         z-index: 9998;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -159,61 +160,60 @@
 
     /* --- HLAVIČKA --- */
     .tereza-header {
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 80px;
         background: linear-gradient(135deg, #05282a, #94e3c2);
         color: white;
-        padding: 15px;
+        padding: 0 15px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex-shrink: 0;
+        z-index: 10;
+        border-top-left-radius: 20px;
     }
 
-    .tereza-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .tereza-info img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 2px solid white;
-    }
-
+    .tereza-info { display: flex; align-items: center; gap: 10px; }
+    .tereza-info img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; }
     .tereza-name { font-weight: bold; font-size: 1.1rem; }
     .tereza-status { font-size: 0.8rem; opacity: 0.9; }
 
-    /* --- AKCE V HLAVIČCE --- */
-    .tereza-actions {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
+    .tereza-actions { display: flex; align-items: center; gap: 5px; }
+    .tereza-actions button { background: none; border: none; padding: 5px; border-radius: 50%; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; }
+    .tereza-actions button:hover { background: rgba(255,255,255,0.2); }
+    .tereza-actions svg { width: 24px; height: 24px; fill: white !important; }
 
-    .tereza-actions button {
-        background: none;
-        border: none;
-        padding: 5px;
-        border-radius: 50%;
-        cursor: pointer;
+    /* --- SIDEBAR --- */
+    .tereza-sidebar {
+        width: 150px;
+        background: linear-gradient(to bottom, #05282a, #27504c);
         color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .tereza-actions button:hover {
-        background: rgba(255,255,255,0.2);
+        padding: 90px 10px 10px 10px;
+        overflow-y: auto;
+        flex-shrink: 0;
+        display: none;
     }
 
-    .tereza-actions svg {
-        width: 24px;
-        height: 24px;
-        fill: white !important;
+    @media (min-width: 600px) {
+        .tereza-sidebar { display: block; }
+        .tereza-header { border-top-right-radius: 20px; border-top-left-radius: 20px; }
     }
 
-    /* --- OBSAH A SIDEBAR --- */
+    .tereza-item {
+        color: rgba(255,255,255,0.85);
+        padding: 10px 8px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        background: rgba(255,255,255,0.1);
+        text-align: center;
+        transition: background 0.2s;
+    }
+    .tereza-item:hover { background: #94e3c2; color: #05282a; }
+    .tereza-title { font-size: 0.75rem; text-transform: uppercase; opacity: 0.6; margin-bottom: 10px; text-align: center; margin-top: 10px;}
+
+    /* --- OBSAH CHATU --- */
     .tereza-content {
         flex: 1;
         display: flex;
@@ -223,76 +223,20 @@
         overflow: hidden;
     }
 
-    .tereza-sidebar {
-        display: none;
-        width: 140px;
-        background: #f8f9fa;
-        border-right: 1px solid #eee;
-        padding: 10px;
-        overflow-y: auto;
-    }
-    
-    @media (min-width: 600px) {
-        #tereza-chat {
-            flex-direction: row;
-            width: 600px;
-        }
-        .tereza-sidebar {
-            display: block;
-            background: linear-gradient(to bottom, #05282a, #27504c);
-            color: white;
-        }
-        .tereza-item {
-            color: rgba(255,255,255,0.8);
-            padding: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            border-radius: 8px;
-            margin-bottom: 5px;
-        }
-        .tereza-item:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
-        .tereza-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            opacity: 0.6;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-    }
-
-    /* --- ZPRÁVY --- */
+    /* --- ZPRÁVY (S OPRAVOU PŘEKRYTÍ) --- */
     .tereza-messages {
         flex: 1;
-        padding: 15px;
+        padding: 90px 20px 20px 20px; 
         overflow-y: auto;
         display: flex;
         flex-direction: column;
         gap: 15px;
     }
 
-    .tereza-bot {
-        display: flex;
-        gap: 10px;
-        align-items: flex-end;
-        align-self: flex-start;
-        max-width: 85%;
-    }
-    .tereza-bot img {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        margin-bottom: 5px;
-        flex-shrink: 0;
-    }
+    .tereza-bot { display: flex; gap: 10px; align-items: flex-end; align-self: flex-start; max-width: 85%; }
+    .tereza-bot img { width: 30px; height: 30px; border-radius: 50%; margin-bottom: 5px; flex-shrink: 0; }
+    .tereza-user { align-self: flex-end; max-width: 80%; }
     
-    .tereza-user {
-        align-self: flex-end;
-        max-width: 80%;
-    }
-
     .tereza-bubble {
         padding: 10px 15px;
         border-radius: 15px;
@@ -300,46 +244,19 @@
         line-height: 1.4;
         word-wrap: break-word;
     }
+    .tereza-bot .tereza-bubble { background: #f1f3f4; color: #333; border-bottom-left-radius: 2px; }
+    .tereza-bot .tereza-bubble a { color: #0a3d3d; font-weight: 600; text-decoration: underline; }
+    .tereza-user .tereza-bubble { background: #0a3d3d; color: white; border-bottom-right-radius: 2px; }
 
-    .tereza-bot .tereza-bubble {
-        background: #f1f3f4;
-        color: #333;
-        border-bottom-left-radius: 2px;
-    }
-    
-    .tereza-bot .tereza-bubble a {
-        color: #0a3d3d;
-        font-weight: 600;
-        text-decoration: underline;
-    }
-
-    .tereza-user .tereza-bubble {
-        background: #0a3d3d;
-        color: white;
-        border-bottom-right-radius: 2px;
-    }
-
-    /* --- VSTUP --- */
+    /* --- INPUT + MIKROFON --- */
     .tereza-input {
-        display: flex;
-        align-items: center;
-        background: #fff;
-        border-top: 1px solid #eee;
-        padding: 10px;
-        gap: 10px;
+        display: flex; align-items: center; background: #fff;
+        border-top: 1px solid #eee; padding: 10px; gap: 8px; z-index: 20;
     }
-
-    .tereza-input input {
-        flex: 1;
-        border: 1px solid #ddd;
-        border-radius: 20px;
-        padding: 10px 15px;
-        outline: none;
-        font-size: 0.95rem;
-    }
-
+    .tereza-input input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 15px; outline: none; font-size: 0.95rem; }
+    
+    /* Společný styl pro tlačítka v inputu */
     .tereza-input button {
-        background: #0a3d3d;
         border: none;
         width: 40px;
         height: 40px;
@@ -348,45 +265,46 @@
         display: flex;
         align-items: center;
         justify-content: center;
-    }
-    
-    .tereza-input button svg {
-        fill: white;
-        width: 20px;
-        height: 20px;
+        transition: all 0.2s;
     }
 
-    /* --- INDIKÁTOR PSANÍ --- */
-    .tereza-typing {
-        display: none;
-        padding: 0 15px 10px;
+    /* Styl pro tlačítko mikrofonu */
+    #tereza-mic {
+        background: #f0f2f5;
+        color: #555;
     }
-    .tereza-typing span {
-        display: inline-block;
-        width: 8px; height: 8px;
-        background: #ccc;
-        border-radius: 50%;
-        animation: typing 1.4s infinite ease-in-out;
-        margin-right: 3px;
+    #tereza-mic:hover { background: #e4e6e9; }
+    
+    /* Animace když se nahrává */
+    #tereza-mic.listening {
+        background: #ff4444;
+        color: white;
+        animation: micPulse 1.5s infinite;
     }
-    .tereza-typing span:nth-child(1){ animation-delay: 0s; }
-    .tereza-typing span:nth-child(2){ animation-delay: 0.2s; }
-    .tereza-typing span:nth-child(3){ animation-delay: 0.4s; }
+    @keyframes micPulse {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); }
+        70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 68, 68, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); }
+    }
+
+    /* Tlačítko Odeslat */
+    #tereza-send { background: #0a3d3d; }
+    #tereza-send svg { fill: white; width: 20px; height: 20px; }
+
+    .tereza-typing { display: none; padding: 0 15px 10px; }
+    .tereza-typing span { display: inline-block; width: 8px; height: 8px; background: #ccc; border-radius: 50%; animation: typing 1.4s infinite ease-in-out; margin-right: 3px; }
+    .tereza-typing span:nth-child(1){ animation-delay: 0s; } .tereza-typing span:nth-child(2){ animation-delay: 0.2s; } .tereza-typing span:nth-child(3){ animation-delay: 0.4s; }
     @keyframes typing { 0%,100%{transform:scale(0);} 50%{transform:scale(1);} }
 
+    /* Mobilní zobrazení */
     @media (max-width: 480px) {
-        .tereza-toggle {
-            width: 60px;
-            height: 60px;
+        .tereza-toggle { width: 60px; height: 60px; }
+        #tereza-chat { 
+            bottom: 20px; right: 10px; left: 10px; width: auto; max-width: none; height: 80vh; 
+            flex-direction: column;
         }
-        #tereza-chat {
-            bottom: 20px;
-            right: 10px;
-            left: 10px;
-            width: auto;
-            max-width: none;
-            height: 80vh;
-        }
+        .tereza-sidebar { display: none; }
+        .tereza-messages { padding-top: 90px; }
     }
 </style>
 
@@ -397,7 +315,6 @@
 
     const API_KEY = "AIzaSyDwb_Zg716BzhMCbO_6M85NVluzPmOfQ-w";
 
-    // Ukládání výsledků a posledního dotazu pro zvýraznění
     window.terezaSearchResults = [];
     window.lastSearchQuery = ''; 
 
@@ -479,15 +396,11 @@
         renderMessages();
     }
 
-    // --- FUNKCE PRO PŘESMĚROVÁNÍ A ULOŽENÍ HLEDANÉHO SLOVA ---
     function redirectToPage(url, pageName, queryToHighlight) {
         addBot(`Přecházím na stránku: ${pageName}... 🚀`);
-        
-        // Uložení slova k zvýraznění do session storage
         if (queryToHighlight) {
             sessionStorage.setItem('tereza_highlight_term', queryToHighlight);
         }
-
         if (window.loadContent) {
             window.loadContent(url);
         } else {
@@ -497,13 +410,10 @@
 
     function handleLocalIntents(msg) {
         const l = msg.toLowerCase().trim();
-
-        // 1. ČÍSELNÝ VÝBĚR
         if (/^\d+$/.test(l) && window.terezaSearchResults.length > 0) {
             const index = parseInt(l) - 1; 
             if (index >= 0 && index < window.terezaSearchResults.length) {
                 const choice = window.terezaSearchResults[index];
-                // Použijeme uložený dotaz z globální proměnné
                 redirectToPage(choice.url, choice.title, window.lastSearchQuery);
                 return true;
             } else {
@@ -511,8 +421,6 @@
                 return true;
             }
         }
-
-        // 2. KLÍČOVÁ SLOVA (přímé odkazy také zvýrazní)
         if (l.includes('video')) { redirectToPage('sdileni_video_content.html', 'Video návody', 'video'); return true; }
         if (l.includes('dokument')) { redirectToPage('sdileni_dokumenty_content.html', 'Dokumenty', 'dokument'); return true; }
         if (l.includes('faq')) { redirectToPage('sdileni_FAQ_content.html', 'FAQ', 'faq'); return true; }
@@ -520,7 +428,6 @@
         return false;
     }
 
-    // Načítání souborů
     const EDC_CONTENT_FILES = Object.keys(PAGE_TITLES);
     async function loadContentObjects() {
         const promises = EDC_CONTENT_FILES.map(async file => {
@@ -536,43 +443,34 @@
         return results.filter(item => item !== null);
     }
 
-    // VYLEPŠENÁ FUNKCE HLEDÁNÍ - Ořezává slova na začátku
     function findRelevantPages(query, pagesData) {
         const q = query.toLowerCase().trim();
         const kws = q.split(/\s+/).filter(w => w.length > 2);
-        
         const hits = [];
 
         for (const page of pagesData) {
             const t = page.content.toLowerCase();
             let score = 0;
-            
             if (t.includes(q)) score += 10;
             kws.forEach(kw => { if (t.includes(kw)) score += 2; });
 
             if (score > 0) {
                 const idx = t.indexOf(kws[0] || q);
                 let start = Math.max(0, idx - 60);
-                
-                // Ošetření začátku - posun na nejbližší mezeru
                 if (start > 0) {
                     const spaceAfter = page.content.indexOf(' ', start);
                     if (spaceAfter !== -1 && spaceAfter < idx) {
                         start = spaceAfter + 1;
                     }
                 }
-
                 let end = Math.min(page.content.length, start + 160);
-                // Ošetření konce
                 if (end < page.content.length) {
                     const spaceBefore = page.content.lastIndexOf(' ', end);
                     if (spaceBefore > start) end = spaceBefore;
                 }
-
                 let snippet = page.content.substring(start, end).trim();
                 if (start > 0) snippet = '...' + snippet;
                 if (end < page.content.length) snippet = snippet + '...';
-                
                 hits.push({ url: page.url, title: page.title, snippet: snippet, score: score });
             }
         }
@@ -593,7 +491,6 @@
         document.getElementById('tereza-typing').style.display = 'block';
 
         try {
-            // Volání Gemini API
             const r = await fetch(
                 `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`,
                 {
@@ -621,8 +518,7 @@
 
                 if (results.length > 0) {
                     window.terezaSearchResults = results;
-                    window.lastSearchQuery = msg; // Uložíme dotaz pro pozdější zvýraznění
-                    
+                    window.lastSearchQuery = msg; 
                     let responseText = `Našla jsem tyto informace na webu:\n\n`;
                     results.forEach((res, index) => {
                         responseText += `${index + 1}. ${res.title}\n`;
@@ -642,7 +538,53 @@
         }
     }
 
-    // --- AUTOMATICKÉ VYZNAČOVÁNÍ TEXTU PO NAČTENÍ STRÁNKY ---
+    // --- FUNKCIONALITA MIKROFONU ---
+    const micBtn = document.getElementById('tereza-mic');
+    const inputField = document.getElementById('tereza-input');
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'cs-CZ'; // Čeština
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        micBtn.onclick = () => {
+            if (micBtn.classList.contains('listening')) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        };
+
+        recognition.onstart = () => {
+            micBtn.classList.add('listening');
+            inputField.placeholder = "Poslouchám... 🎤";
+        };
+
+        recognition.onend = () => {
+            micBtn.classList.remove('listening');
+            inputField.placeholder = "Napište zprávu…";
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            inputField.value = transcript;
+            inputField.focus(); // Aby uživatel mohl hned odeslat
+        };
+
+        recognition.onerror = (event) => {
+            console.warn('Chyba rozpoznávání:', event.error);
+            micBtn.classList.remove('listening');
+            inputField.placeholder = "Nerozuměla jsem, zkuste to znovu.";
+            setTimeout(() => { inputField.placeholder = "Napište zprávu…"; }, 2000);
+        };
+    } else {
+        // Pokud prohlížeč neumí Speech API, tlačítko skryjeme
+        micBtn.style.display = 'none';
+        console.warn("Speech Recognition not supported in this browser.");
+    }
+
     function highlightSearchTerm() {
         const term = sessionStorage.getItem('tereza_highlight_term');
         if (!term) return;
@@ -650,14 +592,12 @@
         const mainContent = document.getElementById('main-content');
         if (!mainContent) return;
 
-        // Bezpečné nahrazení textu (aby se nerozbilo HTML)
         const walk = document.createTreeWalker(mainContent, NodeFilter.SHOW_TEXT, null, false);
         const nodesToHighlight = [];
-        const regex = new RegExp(`(${term})`, 'gi'); // Case-insensitive hledání
+        const regex = new RegExp(`(${term})`, 'gi'); 
 
         while(walk.nextNode()) {
             if (regex.test(walk.currentNode.nodeValue)) {
-                // Vynechat scripty a styly
                 if (walk.currentNode.parentElement.tagName !== 'SCRIPT' && 
                     walk.currentNode.parentElement.tagName !== 'STYLE') {
                     nodesToHighlight.push(walk.currentNode);
@@ -668,33 +608,25 @@
         if (nodesToHighlight.length > 0) {
             nodesToHighlight.forEach(node => {
                 const span = document.createElement('span');
-                // Nahradí text za text se zvýrazněním (zachová HTML strukturu)
                 span.innerHTML = node.nodeValue.replace(regex, '<span class="tereza-highlight">$1</span>');
                 node.parentNode.replaceChild(span, node);
             });
-
-            // Odscrollovat k prvnímu výskytu
             setTimeout(() => {
                 const firstHighlight = document.querySelector('.tereza-highlight');
                 if (firstHighlight) {
                     firstHighlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
-            }, 500); // Malá prodleva pro jistotu načtení
+            }, 500); 
         }
-
-        // Vyčistit, aby se nezvýrazňovalo pořád
         sessionStorage.removeItem('tereza_highlight_term');
     }
 
-    // Sledování změn obsahu (protože loadContent mění DOM)
     const observer = new MutationObserver((mutations) => {
-        // Pokud se změnil #main-content, zkusíme zvýraznit
         if (sessionStorage.getItem('tereza_highlight_term')) {
             highlightSearchTerm();
         }
     });
 
-    // Spuštění observeru na main-content (až bude v DOMu)
     const checkMain = setInterval(() => {
         const main = document.getElementById('main-content');
         if (main) {
@@ -703,85 +635,44 @@
         }
     }, 500);
 
-
-    // Event listenery
     const toggleBtn = document.querySelector('.tereza-toggle');
     const chatWindow = document.getElementById('tereza-chat');
-    
-    toggleBtn.onclick = () => {
-        chatWindow.classList.toggle('open');
-    };
-
+    toggleBtn.onclick = () => { chatWindow.classList.toggle('open'); };
     document.querySelector('.tereza-newchat').onclick = startNewChat;
-    
     document.querySelector('.tereza-close').onclick = () => {
         chatWindow.classList.remove('open');
-        if (document.fullscreenElement) {
-            document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();
-        }
+        if (document.fullscreenElement) { document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.(); }
     };
-
     document.getElementById('tereza-send').onclick = send;
-
-    document.getElementById('tereza-input').addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            send();
-        }
-    });
-    
-    // Quick links
+    document.getElementById('tereza-input').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
     document.querySelectorAll('.tereza-item').forEach(item => {
         item.onclick = () => {
             const q = item.getAttribute('data-q');
             const url = item.getAttribute('data-url');
-            if (url) {
-                redirectToPage(url, item.innerText);
-            } else {
-                const input = document.getElementById('tereza-input');
-                input.value = q;
-                send();
-            }
+            if (url) { redirectToPage(url, item.innerText); } else { const input = document.getElementById('tereza-input'); input.value = q; send(); }
         };
     });
-
     document.getElementById('tereza-fullscreen').onclick = () => {
-        if (!document.fullscreenElement) {
-            chatWindow.requestFullscreen?.() || chatWindow.webkitRequestFullscreen?.() || chatWindow.msRequestFullscreen?.();
-        } else {
-            document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();
-        }
+        if (!document.fullscreenElement) { chatWindow.requestFullscreen?.() || chatWindow.webkitRequestFullscreen?.() || chatWindow.msRequestFullscreen?.(); } 
+        else { document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.(); }
     };
-    
     document.addEventListener('fullscreenchange', () => {
         const isFull = !!document.fullscreenElement;
         const btn = document.getElementById('tereza-fullscreen');
         const path = btn?.querySelector('path');
-        if (path) {
-            path.setAttribute('d', isFull
-                ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z'
-                : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z');
-        }
+        if (path) { path.setAttribute('d', isFull ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z' : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'); }
         btn.title = isFull ? 'Zmenšit' : 'Na celou obrazovku';
         btn.querySelector('svg').style.transform = isFull ? 'scale(1.15)' : 'scale(1)';
     });
-
     document.getElementById('tereza-download').onclick = () => {
         if (messages.length <= 1) { alert('Konverzace je prázdná.'); return; }
         let txt = 'Konverzace s Terezou (EDC)\nDatum: ' + new Date().toLocaleString('cs-CZ') + '\n\n';
-        messages.forEach(m => {
-            const who = m.role === 'model' ? 'Terezka' : 'Ty';
-            txt += `${who}:\n${m.parts[0].text}\n\n`;
-        });
+        messages.forEach(m => { const who = m.role === 'model' ? 'Terezka' : 'Ty'; txt += `${who}:\n${m.parts[0].text}\n\n`; });
         const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `tereza-chat-${new Date().toISOString().slice(0,10)}.txt`;
-        a.click();
-        URL.revokeObjectURL(url);
+        const a = document.createElement('a'); a.href = url; a.download = `tereza-chat-${new Date().toISOString().slice(0,10)}.txt`; a.click(); URL.revokeObjectURL(url);
     };
 
-    console.log('Terezka chatbot v3 - Vyznačování textu aktivní');
+    console.log('Terezka chatbot v5 - Hlasové zadávání aktivní');
 })();
 </script>
