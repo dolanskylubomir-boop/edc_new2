@@ -1,6 +1,3 @@
-
-<!-- chatbot.html – PLNĚ OPRAVENÁ VERZE (únor 2026) -->
-
 <div class="tereza-wrapper">
     <div class="tereza-pulse-ring"></div>
     <div class="tereza-toggle">
@@ -38,7 +35,7 @@
 
             <button class="tereza-close" title="Zavřít" aria-label="Zavřít chat">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 17.59 13.41 12z"/>
                 </svg>
             </button>
         </div>
@@ -70,95 +67,350 @@
 </div>
 
 <style>
-    /* Oprava viditelnosti ikon na mobilu + lepší responzivita */
+    /* --- ZÁKLADNÍ POZICE A TLAČÍTKO --- */
+    .tereza-wrapper {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 70px;
+        height: 70px;
+        z-index: 9999;
+        /* Zajišťuje, že wrapper neblokuje klikání, pokud by byl větší, ale obsah ano */
+        pointer-events: none; 
+    }
+
+    .tereza-toggle {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: transform 0.3s ease;
+        background: white;
+        border: 4px solid #fff;
+        /* DŮLEŽITÉ: Povoluje klikání na tlačítko */
+        pointer-events: auto; 
+    }
+
+    .tereza-toggle:hover {
+        transform: scale(1.1);
+    }
+
+    .tereza-toggle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .tereza-pulse-ring {
+        position: absolute;
+        top: -5px; left: -5px; right: -5px; bottom: -5px;
+        border: 2px solid #94e3c2;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+        pointer-events: none;
+    }
+    @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+    /* --- HLAVNÍ OKNO CHATU --- */
+    #tereza-chat {
+        position: fixed;
+        bottom: 100px;
+        right: 20px;
+        width: 420px;
+        max-width: calc(100vw - 40px);
+        height: 600px;
+        max-height: 80vh;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+        display: none !important; /* VÝCHOZÍ STAV: SKRYTO - override styles.css */
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 9998;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* !!! TOTO JE KLÍČOVÉ PRO OTEVŘENÍ !!! */
+    #tereza-chat.open {
+        display: flex !important;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- HLAVIČKA --- */
+    .tereza-header {
+        background: linear-gradient(135deg, #05282a, #94e3c2);
+        color: white;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .tereza-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .tereza-info img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+
+    .tereza-name { font-weight: bold; font-size: 1.1rem; }
+    .tereza-status { font-size: 0.8rem; opacity: 0.9; }
+
+    /* --- AKCE V HLAVIČCE --- */
     .tereza-actions {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 5px;
     }
 
     .tereza-actions button {
         background: none;
         border: none;
-        padding: 8px;
+        padding: 5px;
         border-radius: 50%;
         cursor: pointer;
-        transition: all 0.2s;
-        min-width: 48px;
-        min-height: 48px;
+        color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        touch-action: manipulation;
+    }
+    
+    .tereza-actions button:hover {
+        background: rgba(255,255,255,0.2);
     }
 
     .tereza-actions svg {
-        width: 28px !important;
-        height: 28px !important;
-        fill: #0a3d3d !important;
+        width: 24px;
+        height: 24px;
+        fill: white !important;
     }
 
-    .tereza-actions button:hover {
-        background: rgba(10,61,61,0.15);
+    /* --- OBSAH A SIDEBAR --- */
+    .tereza-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        position: relative;
+        overflow: hidden;
     }
 
+    .tereza-sidebar {
+        display: none; /* Skryto na mobilech, na PC lze zapnout */
+        width: 140px;
+        background: #f8f9fa;
+        border-right: 1px solid #eee;
+        padding: 10px;
+        overflow-y: auto;
+    }
+    
+    @media (min-width: 600px) {
+        #tereza-chat {
+            flex-direction: row;
+            width: 600px;
+        }
+        .tereza-sidebar {
+            display: block;
+            background: linear-gradient(to bottom, #05282a, #27504c);
+            color: white;
+        }
+        .tereza-item {
+            color: rgba(255,255,255,0.8);
+            padding: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .tereza-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .tereza-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            opacity: 0.6;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    }
+
+    /* --- ZPRÁVY --- */
+    .tereza-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .tereza-bot {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+        align-self: flex-start;
+        max-width: 85%;
+    }
+    .tereza-bot img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-bottom: 5px;
+        flex-shrink: 0;
+    }
+    
+    .tereza-user {
+        align-self: flex-end;
+        max-width: 80%;
+    }
+
+    .tereza-bubble {
+        padding: 10px 15px;
+        border-radius: 15px;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        word-wrap: break-word;
+    }
+
+    .tereza-bot .tereza-bubble {
+        background: #f1f3f4;
+        color: #333;
+        border-bottom-left-radius: 2px;
+    }
+    
+    .tereza-bot .tereza-bubble a {
+        color: #0a3d3d;
+        font-weight: 600;
+        text-decoration: underline;
+    }
+
+    .tereza-user .tereza-bubble {
+        background: #0a3d3d;
+        color: white;
+        border-bottom-right-radius: 2px;
+    }
+
+    /* --- VSTUP --- */
     .tereza-input {
         display: flex;
         align-items: center;
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 50px;
-        padding: 8px 12px;
-        margin: 12px 0;
+        background: #fff;
+        border-top: 1px solid #eee;
+        padding: 10px;
+        gap: 10px;
     }
 
     .tereza-input input {
         flex: 1;
-        border: none;
-        background: transparent;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 10px 15px;
         outline: none;
-        font-size: 1rem;
-        padding: 0 12px;
-        color: #333;
+        font-size: 0.95rem;
     }
 
     .tereza-input button {
-        background: none;
+        background: #0a3d3d;
         border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
         cursor: pointer;
-        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .tereza-input button svg {
+        fill: white;
+        width: 20px;
+        height: 20px;
     }
 
-    .tereza-input svg {
-        width: 28px;
-        height: 28px;
-        fill: #0a3d3d;
+    /* --- INDIKÁTOR PSANÍ --- */
+    .tereza-typing {
+        display: none;
+        padding: 0 15px 10px;
     }
+    .tereza-typing span {
+        display: inline-block;
+        width: 8px; height: 8px;
+        background: #ccc;
+        border-radius: 50%;
+        animation: typing 1.4s infinite ease-in-out;
+        margin-right: 3px;
+    }
+    .tereza-typing span:nth-child(1){ animation-delay: 0s; }
+    .tereza-typing span:nth-child(2){ animation-delay: 0.2s; }
+    .tereza-typing span:nth-child(3){ animation-delay: 0.4s; }
+    @keyframes typing { 0%,100%{transform:scale(0);} 50%{transform:scale(1);} }
 
-    @media (max-width: 768px) {
-        .tereza-actions {
-            gap: 4px;
+    /* Oprava pro mobilní zobrazení */
+    @media (max-width: 480px) {
+        .tereza-toggle {
+            width: 60px;
+            height: 60px;
         }
-        .tereza-actions button {
-            padding: 6px;
-            min-width: 44px;
-            min-height: 44px;
-        }
-        .tereza-actions svg {
-            width: 26px !important;
-            height: 26px !important;
+        #tereza-chat {
+            bottom: 20px;
+            right: 10px;
+            left: 10px;
+            width: auto;
+            max-width: none;
+            height: 80vh;
         }
     }
 </style>
 
 <script>
 (function () {
+    // Prevence dvojího spuštění
     if (window.__TEREZA_INIT__) return;
     window.__TEREZA_INIT__ = true;
 
     const API_KEY = "AIzaSyDwb_Zg716BzhMCbO_6M85NVluzPmOfQ-w";
 
-    // System prompt (zůstává beze změny)
+    // Globální proměnná pro uložení posledních výsledků hledání (pro navigaci číslem)
+    window.terezaSearchResults = [];
+
+    // Definice názvů stránek pro hezčí výpis
+    const PAGE_TITLES = {
+        'index_content.html': 'Úvodní stránka',
+        'sdileni_content.html': 'Sdílení elektřiny',
+        'sdileni_dokumenty_content.html': 'Dokumenty ke sdílení',
+        'sdileni_video_content.html': 'Video návody (Sdílení)',
+        'sdileni_FAQ_content.html': 'Časté dotazy (Sdílení)',
+        'akumulace_content.html': 'Akumulace',
+        'akumulace_dokumenty_content.html': 'Dokumenty (Akumulace)',
+        'akumulace_video_content.html': 'Videa (Akumulace)',
+        'akumulace_faq_content.html': 'FAQ (Akumulace)',
+        'flexibilita_content.html': 'Flexibilita',
+        'flexibilita_dokumenty_content.html': 'Dokumenty (Flexibilita)',
+        'flexibilita_video_content.html': 'Videa (Flexibilita)',
+        'flexibilita_FAQ_content.html': 'FAQ (Flexibilita)',
+        'semafor_content.html': 'Semafor',
+        'M2M_content.html': 'M2M komunikace',
+        'aktuality_content.html': 'Aktuality',
+        'faq_content.html': 'Obecné dotazy',
+        'slovnik_content.html': 'Slovník pojmů',
+        'kariera_content.html': 'Kariéra'
+    };
+
     const systemPromptText = `Jsi Terezka, milá a lidská virtuální asistentka EDC. Ahoj! 😊 Jsem tu, abych ti pomohla s čímkoli okolo energetiky, sdílení elektřiny nebo EDC. 
                 Odpovídej vždy v češtině, přátelsky, jako člověk – používej hovorový jazyk, smajlíky kde to sedí, buď empatická a ochotná pomoci. 
                 Primárně používej informace z následujícího znalostního základu o EDC (shrnutí všech sekcí webu https://www.edc-cr.cz/). 
@@ -244,11 +496,10 @@
                 Kariéra:
                 Pozice: Analytik dat, Architekt kyberbezpečnosti, Back-end developer, Full-stack Developer, Specialista fyzické bezpečnosti.`;
 
-
     const welcomeMessage = { role: 'model', parts: [{ text: 'Vítejte! Jsem Terezka, vaše virtuální asistentka EDC. Jak vám dnes mohu pomoci?' }] };
-
     let messages = [welcomeMessage];
 
+    // Načtení historie
     const saved = localStorage.getItem('terezaMessages');
     if (saved) {
         try {
@@ -261,17 +512,21 @@
         const box = document.getElementById('tereza-messages');
         box.innerHTML = '';
         messages.forEach(m => {
+            let textContent = m.parts[0].text
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
             if (m.role === 'model') {
                 box.insertAdjacentHTML('beforeend', `
                     <div class="tereza-bot">
                         <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face">
-                        <div class="tereza-bubble">${m.parts[0].text}</div>
+                        <div class="tereza-bubble">${textContent}</div>
                     </div>
                 `);
             } else {
                 box.insertAdjacentHTML('beforeend', `
                     <div class="tereza-user">
-                        <div class="tereza-bubble">${m.parts[0].text}</div>
+                        <div class="tereza-bubble">${textContent}</div>
                     </div>
                 `);
             }
@@ -289,73 +544,78 @@
 
     function startNewChat() {
         messages = [welcomeMessage];
+        window.terezaSearchResults = []; 
         localStorage.removeItem('terezaMessages');
         renderMessages();
     }
 
+    function redirectToPage(url, pageName) {
+        addBot(`Přecházím na stránku: ${pageName}... 🚀`);
+        if (window.loadContent) {
+            window.loadContent(url);
+        } else {
+            window.location.href = url;
+        }
+    }
+
     function handleLocalIntents(msg) {
-        const l = msg.toLowerCase();
-        if (l.includes('video')) {
-            addBot('Otevřela jsem stránku s video návody.');
-            if (window.loadContent) window.loadContent('sdileni_video_content.html');
-            return true;
+        const l = msg.toLowerCase().trim();
+
+        // 1. KONTROLA: Je to číslo pro výběr výsledku?
+        if (/^\d+$/.test(l) && window.terezaSearchResults.length > 0) {
+            const index = parseInt(l) - 1; 
+            if (index >= 0 && index < window.terezaSearchResults.length) {
+                const choice = window.terezaSearchResults[index];
+                redirectToPage(choice.url, choice.title);
+                return true;
+            } else {
+                addBot(`Jejda, takové číslo v nabídce nemám. Zkuste vybrat číslo od 1 do ${window.terezaSearchResults.length}.`);
+                return true;
+            }
         }
-        if (l.includes('dokument')) {
-            addBot('Otevřela jsem stránku s dokumenty.');
-            if (window.loadContent) window.loadContent('sdileni_dokumenty_content.html');
-            return true;
-        }
-        if (l.includes('faq')) {
-            addBot('Otevřela jsem stránku s FAQ.');
-            if (window.loadContent) window.loadContent('sdileni_FAQ_content.html');
-            return true;
-        }
-        if (l.includes('sdílení') || l.includes('sdileni')) {
-            addBot('Otevřela jsem stránku o sdílení elektřiny.');
-            if (window.loadContent) window.loadContent('sdileni_content.html');
-            return true;
-        }
+
+        if (l.includes('video')) { redirectToPage('sdileni_video_content.html', 'Video návody'); return true; }
+        if (l.includes('dokument')) { redirectToPage('sdileni_dokumenty_content.html', 'Dokumenty'); return true; }
+        if (l.includes('faq')) { redirectToPage('sdileni_FAQ_content.html', 'FAQ'); return true; }
+        if (l.includes('sdílení') || l.includes('sdileni')) { redirectToPage('sdileni_content.html', 'Sdílení elektřiny'); return true; }
         return false;
     }
 
-    // Fallback – prohledávání obsahu stránek při selhání API
-    const EDC_CONTENT_FILES = [
-        'index_content.html', 'sdileni_content.html', 'sdileni_dokumenty_content.html',
-        'sdileni_video_content.html', 'sdileni_FAQ_content.html', 'akumulace_content.html',
-        'akumulace_dokumenty_content.html', 'akumulace_video_content.html', 'akumulace_faq_content.html',
-        'flexibilita_content.html', 'flexibilita_dokumenty_content.html', 'flexibilita_video_content.html',
-        'flexibilita_FAQ_content.html', 'semafor_content.html', 'M2M_content.html',
-        'aktuality_content.html', 'faq_content.html', 'slovnik_content.html', 'kariera_content.html'
-    ];
-
-    async function loadAllContentFiles() {
+    // Načte obsah souborů
+    const EDC_CONTENT_FILES = Object.keys(PAGE_TITLES);
+    async function loadContentObjects() {
         const promises = EDC_CONTENT_FILES.map(async file => {
             try {
                 const res = await fetch(file);
-                if (!res.ok) return '';
+                if (!res.ok) return null;
                 const text = await res.text();
-                return text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-            } catch {
-                return '';
-            }
+                const cleanText = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                return { url: file, title: PAGE_TITLES[file] || file, content: cleanText };
+            } catch { return null; }
         });
         const results = await Promise.all(promises);
-        return results.filter(Boolean).join('\n\n---\n\n');
+        return results.filter(item => item !== null);
     }
 
-    function findRelevantSections(query, fullText) {
+    function findRelevantPages(query, pagesData) {
         const q = query.toLowerCase().trim();
         const kws = q.split(/\s+/).filter(w => w.length > 2);
-        const sections = fullText.split(/\n{3,}|---/);
-        const rel = [];
-        for (const sec of sections) {
-            const t = sec.toLowerCase();
-            if (t.includes(q) || kws.filter(k => t.includes(k)).length >= 2) {
-                const start = Math.max(0, t.indexOf(q) - 150);
-                rel.push(sec.substring(start, start + 600).trim());
+        const hits = [];
+
+        for (const page of pagesData) {
+            const t = page.content.toLowerCase();
+            let score = 0;
+            if (t.includes(q)) score += 10;
+            kws.forEach(kw => { if (t.includes(kw)) score += 2; });
+
+            if (score > 0) {
+                const idx = t.indexOf(kws[0] || q);
+                const start = Math.max(0, idx - 50);
+                const snippet = page.content.substring(start, start + 150) + '...';
+                hits.push({ url: page.url, title: page.title, snippet: snippet, score: score });
             }
         }
-        return rel.length > 0 ? rel.slice(0, 4) : [];
+        return hits.sort((a, b) => b.score - a.score).slice(0, 5);
     }
 
     async function send() {
@@ -388,44 +648,50 @@
 
             const d = await r.json();
             const reply = d.candidates?.[0]?.content?.parts?.[0]?.text || 'Odpověď se nepodařilo načíst.';
+            window.terezaSearchResults = []; 
             addBot(reply);
-        } catch (err) {
-            console.warn('Gemini API selhalo:', err);
-            addBot('Momentíček... API zrovna nefunguje, hledám odpověď přímo v obsahu webu EDC... 🔍');
 
+        } catch (err) {
+            console.warn('Gemini API selhalo, zkouším lokální hledání:', err);
             try {
-                const allContent = await loadAllContentFiles();
-                const relevant = findRelevantSections(msg, allContent);
-                let fb = relevant.length > 0
-                    ? `Našla jsem tyto relevantní části přímo z webu:\n\n` + relevant.map((t,i)=>`**${i+1}.** ${t}\n`).join('\n') + `\n\nPokud to nestačí, zkuste otázku upřesnit. 😊`
-                    : `Bohužel jsem v obsahu nenašla nic přímo souvisejícího. Zkuste to jinak nebo napište na info@edc-cr.cz.`;
-                addBot(fb);
+                const pagesData = await loadContentObjects();
+                const results = findRelevantPages(msg, pagesData);
+
+                if (results.length > 0) {
+                    window.terezaSearchResults = results;
+                    let responseText = `Našla jsem tyto informace na webu:\n\n`;
+                    results.forEach((res, index) => {
+                        responseText += `${index + 1}. ${res.title}\n`;
+                        responseText += `   "${res.snippet}"\n\n`;
+                    });
+                    responseText += `💡 **Chcete přejít na některou stránku? Napište jen její číslo (např. 1).**`;
+                    addBot(responseText);
+                } else {
+                    addBot(`Bohužel jsem v obsahu webu nenašla nic, co by odpovídalo "${msg}". Zkuste to formulovat jinak nebo kontaktujte info@edc-cr.cz.`);
+                    window.terezaSearchResults = [];
+                }
             } catch (e) {
-                addBot('Ani se mi nepodařilo načíst obsah stránek... 😔 Zkuste později nebo napište na info@edc-cr.cz.');
+                addBot('Omlouvám se, nepodařilo se mi prohledat web. Zkuste to prosím později.');
             }
         } finally {
             document.getElementById('tereza-typing').style.display = 'none';
         }
     }
 
-    // ────────────────────────────────────────────────
     // Event listenery
-    // ────────────────────────────────────────────────
-    document.querySelector('.tereza-toggle').onclick = () =>
-        document.getElementById('tereza-chat').classList.toggle('open');
+    const toggleBtn = document.querySelector('.tereza-toggle');
+    const chatWindow = document.getElementById('tereza-chat');
+    
+    toggleBtn.onclick = () => {
+        chatWindow.classList.toggle('open');
+    };
 
     document.querySelector('.tereza-newchat').onclick = startNewChat;
-
-    // KRITICKÁ OPRAVA: Zavírání chatu + UKONČENÍ FULLSCREEN
+    
     document.querySelector('.tereza-close').onclick = () => {
-        const chat = document.getElementById('tereza-chat');
-        chat.classList.remove('open');
-
-        // VŽDY ukončit fullscreen při zavírání chatu
+        chatWindow.classList.remove('open');
         if (document.fullscreenElement) {
-            document.exitFullscreen?.() ||
-            document.webkitExitFullscreen?.() ||
-            document.msExitFullscreen?.();
+            document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();
         }
     };
 
@@ -437,22 +703,32 @@
             send();
         }
     });
+    
+    // Quick links v sidebaru
+    document.querySelectorAll('.tereza-item').forEach(item => {
+        item.onclick = () => {
+            const q = item.getAttribute('data-q');
+            const url = item.getAttribute('data-url');
+            if (url) {
+                // Pokud je to přímý odkaz
+                redirectToPage(url, item.innerText);
+            } else {
+                // Pokud je to dotaz
+                const input = document.getElementById('tereza-input');
+                input.value = q;
+                send();
+            }
+        };
+    });
 
-    // Fullscreen toggle
     document.getElementById('tereza-fullscreen').onclick = () => {
-        const chat = document.getElementById('tereza-chat');
         if (!document.fullscreenElement) {
-            chat.requestFullscreen?.() ||
-            chat.webkitRequestFullscreen?.() ||
-            chat.msRequestFullscreen?.();
+            chatWindow.requestFullscreen?.() || chatWindow.webkitRequestFullscreen?.() || chatWindow.msRequestFullscreen?.();
         } else {
-            document.exitFullscreen?.() ||
-            document.webkitExitFullscreen?.() ||
-            document.msExitFullscreen?.();
+            document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();
         }
     };
-
-    // Aktualizace ikony při změně fullscreen stavu
+    
     document.addEventListener('fullscreenchange', () => {
         const isFull = !!document.fullscreenElement;
         const btn = document.getElementById('tereza-fullscreen');
@@ -462,24 +738,17 @@
                 ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z'
                 : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z');
         }
-        if (btn) btn.title = isFull ? 'Zmenšit' : 'Na celou obrazovku';
+        btn.title = isFull ? 'Zmenšit' : 'Na celou obrazovku';
+        btn.querySelector('svg').style.transform = isFull ? 'scale(1.15)' : 'scale(1)';
     });
 
-    // Stažení konverzace
     document.getElementById('tereza-download').onclick = () => {
-        if (messages.length <= 1) {
-            alert('Konverzace je prázdná.');
-            return;
-        }
-
-        let txt = 'Konverzace s Terezou (EDC)\n';
-        txt += 'Datum: ' + new Date().toLocaleString('cs-CZ') + '\n\n';
-
+        if (messages.length <= 1) { alert('Konverzace je prázdná.'); return; }
+        let txt = 'Konverzace s Terezou (EDC)\nDatum: ' + new Date().toLocaleString('cs-CZ') + '\n\n';
         messages.forEach(m => {
             const who = m.role === 'model' ? 'Terezka' : 'Ty';
-            txt += `${who}:\n${m.parts[0].text.replace(/\n/g, '\n  ')}\n\n`;
+            txt += `${who}:\n${m.parts[0].text}\n\n`;
         });
-
         const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -489,22 +758,6 @@
         URL.revokeObjectURL(url);
     };
 
-    console.log('Terezka chatbot plně načten a opraven – zavírání + fullscreen funguje');
+    console.log('Terezka chatbot v2 - Plně opravená verze');
 })();
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
