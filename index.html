@@ -55,37 +55,56 @@
             border-radius: 5px;
         }
         #cookie-banner a { color: #fff; text-decoration: underline; }
+
+
+      /* 1. BANNER pro stránky ve výstavbě !!*/
         
         .construction-banner {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: auto;
-            max-width: 90%;
-            min-width: 300px;
+            /* 1. Pozicování - Střed obrazovky */
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            
+            /* 2. Rozměry - Zvětšeno o 50% */
+            width: max-content !important;
+            max-width: 95vw !important;
+            min-width: 500px !important; /* Zvětšeno z 300px */
+            margin: 0 !important;
+            
+            /* 3. Vzhled - Zvětšené písmo a odsazení */
+            z-index: 99999 !important;
             background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
             color: white;
             font-weight: 900;
-            font-size: 2rem;
-            padding: 2rem 3rem;
+            font-size: 3.5rem;   /* Zvětšeno z 2rem (cca o 75% pro pořádný efekt) */
+            padding: 3.5rem 5rem; /* Zvětšeno z 2rem 3rem */
             text-align: center;
-            z-index: 9999;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 5px;  /* Výraznější rozestupy písmen */
+            
+            /* 4. Efekty - Silnější ohraničení a stín */
             pointer-events: none;
             animation: pulse 2s infinite;
-            border: 3px solid #ffcccc;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 6px solid #ffcccc; /* Silnější linka */
+            border-radius: 20px;       /* Větší zaoblení ladící k velikosti */
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7); /* Hlubší stín */
         }
+
+        /* Úprava ikon, aby odpovídaly velikosti textu */
+        .construction-icon {
+            font-size: 4rem; 
+            vertical-align: middle;
+            margin: 0 15px;
+        }
+
         
         .construction-icon {
-            animation: blink 1s infinite;
+            animation: blink 5s infinite;
         }
         
         .construction-icon:nth-child(2) {
-            animation-delay: 0.5s;
+            animation-delay: 1.5s;
         }
         
         @keyframes pulse {
