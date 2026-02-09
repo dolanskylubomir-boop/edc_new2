@@ -575,7 +575,18 @@
                 submitBtn.textContent = 'Přihlásit se';
             }
         };
-        
+
+        // Zavření modálu kariéra kliknutím mimo modál
+
+
+        window.addEventListener('click', function(event) {
+            // Pokud je kliknutý element samotný modál (tmavé pozadí)
+            if (event.target.classList.contains('modal')) {
+                // Zavřít modál pomocí jeho ID
+                closeModal(event.target.id);
+            }
+        });
+                
 
         // ====================== NAČÍTÁNÍ OBSAHU ======================
         window.loadContent = function(path) {
