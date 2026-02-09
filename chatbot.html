@@ -67,6 +67,23 @@
 </div>
 
 <style>
+    /* --- STYL PRO ZVÝRAZNĚNÍ HLEDANÉHO TEXTU --- */
+    .tereza-highlight {
+        background-color: #ffeb3b;
+        color: #000;
+        font-weight: bold;
+        border-radius: 2px;
+        padding: 0 2px;
+        box-shadow: 0 0 5px rgba(255, 235, 59, 0.5);
+        animation: highlightPulse 2s infinite;
+    }
+
+    @keyframes highlightPulse {
+        0% { background-color: #ffeb3b; }
+        50% { background-color: #fff176; }
+        100% { background-color: #ffeb3b; }
+    }
+
     /* --- ZÁKLADNÍ POZICE A TLAČÍTKO --- */
     .tereza-wrapper {
         position: fixed;
@@ -75,7 +92,6 @@
         width: 70px;
         height: 70px;
         z-index: 9999;
-        /* Zajišťuje, že wrapper neblokuje klikání, pokud by byl větší, ale obsah ano */
         pointer-events: none; 
     }
 
@@ -89,7 +105,6 @@
         transition: transform 0.3s ease;
         background: white;
         border: 4px solid #fff;
-        /* DŮLEŽITÉ: Povoluje klikání na tlačítko */
         pointer-events: auto; 
     }
 
@@ -125,14 +140,13 @@
         background: #fff;
         border-radius: 20px;
         box-shadow: 0 5px 25px rgba(0,0,0,0.2);
-        display: none !important; /* VÝCHOZÍ STAV: SKRYTO - override styles.css */
+        display: none !important;
         flex-direction: column;
         overflow: hidden;
         z-index: 9998;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* !!! TOTO JE KLÍČOVÉ PRO OTEVŘENÍ !!! */
     #tereza-chat.open {
         display: flex !important;
         animation: slideIn 0.3s ease-out;
@@ -210,7 +224,7 @@
     }
 
     .tereza-sidebar {
-        display: none; /* Skryto na mobilech, na PC lze zapnout */
+        display: none;
         width: 140px;
         background: #f8f9fa;
         border-right: 1px solid #eee;
@@ -360,7 +374,6 @@
     .tereza-typing span:nth-child(3){ animation-delay: 0.4s; }
     @keyframes typing { 0%,100%{transform:scale(0);} 50%{transform:scale(1);} }
 
-    /* Oprava pro mobilní zobrazení */
     @media (max-width: 480px) {
         .tereza-toggle {
             width: 60px;
@@ -379,16 +392,15 @@
 
 <script>
 (function () {
-    // Prevence dvojího spuštění
     if (window.__TEREZA_INIT__) return;
     window.__TEREZA_INIT__ = true;
 
     const API_KEY = "AIzaSyDwb_Zg716BzhMCbO_6M85NVluzPmOfQ-w";
 
-    // Globální proměnná pro uložení posledních výsledků hledání (pro navigaci číslem)
+    // Ukládání výsledků a posledního dotazu pro zvýraznění
     window.terezaSearchResults = [];
+    window.lastSearchQuery = ''; 
 
-    // Definice názvů stránek pro hezčí výpis
     const PAGE_TITLES = {
         'index_content.html': 'Úvodní stránka',
         'sdileni_content.html': 'Sdílení elektřiny',
@@ -413,93 +425,11 @@
 
     const systemPromptText = `Jsi Terezka, milá a lidská virtuální asistentka EDC. Ahoj! 😊 Jsem tu, abych ti pomohla s čímkoli okolo energetiky, sdílení elektřiny nebo EDC. 
                 Odpovídej vždy v češtině, přátelsky, jako člověk – používej hovorový jazyk, smajlíky kde to sedí, buď empatická a ochotná pomoci. 
-                Primárně používej informace z následujícího znalostního základu o EDC (shrnutí všech sekcí webu https://www.edc-cr.cz/). 
-                Pokud otázka není plně pokryta těmito informacemi, pak použij obecnější znalosti, ale uveď, že to není přímo z webu EDC, a nabídni ověření.
-
-                Znalostní základ z webu EDC:
-
-                O společnosti EDC:
-                Elektroenergetické datové centrum, a. s. (EDC) je společnost založená podle energetického zákona pro sběr, standardizaci a sdílení dat v energetice, což umožňuje efektivní transformaci české energetiky a podporuje rozvoj komunitní energetiky. Shromažďuje informace o výrobě a spotřebě elektřiny na úrovni domácností a firem, tocích elektřiny a jejím sdílení. EDC je klíčové pro dekarbonizaci, elektromobilitu, obnovitelné zdroje a sdílenou energetiku, kde obrácené toky elektřiny vyžadují vysokou digitalizaci pro výměnu, zpracování a zpřístupňování dat. Nahrazuje fyzické odečítání spotřeby jednou ročně vzdáleným vyhodnocením každých 15 minut a denním předáním dat mezi zákazníky a distributory, přičemž umožňuje přístup k datům o sdílení téměř v reálném čase. Poskytuje domácnostem a firmám informace o spotřebě podle času a tarifu, případně typu spotřebiče, a zprostředkovává data obchodníkům, distributorům a správci přenosové soustavy.
-
-                Služby:
-                - Dočasné řešení (od 1. 8. 2024): Registrace účastníků trhu, sběr a zpracování dat z průběhového měření, vyhodnocování sdílení elektřiny pro vypořádání odchylek a fakturaci, řešení reklamací souvisejících se sdílením.
-                - Finální řešení (budoucnost): Rozšíření služeb podle novely LEX OZE III o řízení dat pro akumulaci, flexibilitu nebo agregaci.
-
-                Vedení: Petr Kusý (předseda představenstva), Richard Kabele (místopředseda představenstva), Jan Vaněček (člen představenstva), David Pišťák (člen představenstva).
-                Dozorčí rada: Radim Černý (předseda), David Šafář (místopředseda), Stanislav Votruba (člen), Pavel Šolc (člen), Petr Borecký (člen), Petr Binhack (člen).
-                Struktura: Akcie EDC vlastní rovnoměrně ČEPS (provozovatel přenosové soustavy) a distributoři ČEZ Distribuce, EG.D a PREdistribuce.
-
-                Kontakty a sídlo:
-                Call centrum: Po–Pá 8:00–16:00; z ČR: +420 800 720 204 (zdarma); ze zahraničí: +420 519 799 300 (zpoplatněno).
-                E-mail: info@edc-cr.cz (podpora uživatelům Portálu EDC, informace o komunitní energetice, reklamační podpora).
-                Sídlo: Na Hroudě 1492/4, 100 00 Praha 10 - Vršovice; ID datové schránky: i68u6qe; zapsáno v obchodním rejstříku Městského soudu v Praze, oddíl B, vložka 28495.
-                Korespondenční adresa: Dock In One, Voctářova 2449/5, 180 00 Praha 8 - Libeň.
-                Adresa pro odeslání smluv: Pouze e-mail info@edc-cr.cz.
-                Fakturační údaje: Na Hroudě 1492/4, 100 00 Praha 10 - Vršovice; IČO: 21020264; DIČ: CZ21020264; Bankovní spojení: Komerční banka, a.s., číslo účtu: 131-1380440247/0100, IBAN: CZ96 0100 0001 3113 8044 0247, SWIFT: KOMBCZPPXXX.
-
-                Komunitní energetika a sdílení energie:
-                Sdílení elektřiny v rámci nového systému komunitní energetiky nabízí zákazníkům efektivnější využití vlastní vyrobené elektřiny, lepší kontrolu nad svojí spotřebou a posílení vlastní energetické soběstačnosti. Přispěje k lepší ochraně životního prostředí díky optimalizaci spotřeby elektřiny a podpoří rozvoj obnovitelných zdrojů energie. Změna spotřebního chování sníží výdaje za energie.
-                Co znamená sdílení elektřiny: Elektřinu vyrobenou jedním subjektem lze sdílet ve stejný moment (15minutový interval) do jiného odběrného místa na jiné adrese. Nelze ji využít později.
-                Hlavní přínosy: Efektivnější využití, kontrola spotřeby, soběstačnost, ochrana prostředí, rozvoj OZE, snížení výdajů.
-                Ekonomický smysl: Vyplatí se tam, kde nelze instalovat vlastní FV, v obcích, komunitách, SVJ. Úspora individuální, závisí na počtu subjektů, výkonu, cenách.
-                Náklady v soustavě: Pro distributora žádné vícenáklady (účetní operace), pro obchodníka možné vyšší náklady na odchylky kvůli méně předvídatelným zdrojům.
-                Poplatky: Žádné extra, stejné distribuční poplatky jako u nákupu; v jedné HDS nižší. Neúčtují se poplatky za distribuci ve VT/NT, systémové služby, podpora OZE.
-                Proč poplatky za distribuci: Sdílení je účetní, ne fyzické; elektřina se přenáší sítí.
-                Pozor při nastavení: Promyšlení alokačního mechanismu (komu, pořadí, množství).
-                Území: Po celé ČR pro zákazníky/výrobce; pro společenství max 3 obce s RP nebo Praha. Max počet míst v skupině omezen. Nelze přes hranice.
-                Sdílení sám sobě: Ano, ale podléhá distribučním poplatkům.
-                Sdílení přes distributory: Ano, různá území, dodavatelé, zákazníci, napěťové hladiny, kategorie (domácnosti/podnikatelé).
-                Nelze později: Pouze ve stejném intervalu.
-                Platba: Automaticky odečteno z faktury; cena dohodou mezi účastníky (zdarma nebo poplatek), dohoda písemná doporučena.
-                Ovlivnění smluv: ? (neúplné v datech)
-
-                Akumulace elektřiny:
-                EDC bude v budoucnu zajišťovat datové řízení akumulace energie v celé soustavě. Eviduje a koordinuje přítoky a odtoky do/z úložišť (baterie, akumulace do vody). Data slouží k predikci, bilančnímu vyrovnání, řízení flexibility. Umožní zapojení více OZE bez ohrožení stability.
-
-                Flexibilita v síti:
-                Obchodní agregace flexibility: Sdružuje malé spotřebiče, výrobny, úložiště do agregovaného bloku. Cíl: Efektivita kapacit, stabilita soustavy, snížení nákladů. EDC zajistí technické, datové, evidenční zázemí.
-
-                Síťový semafor:
-                (Ne přímo pokryto; možná souvisí s regulací sítě.)
-
-                Přihlášení do portálu EDC:
-                Portál EDC je webová platforma pro registrované uživatele; po registraci a smlouvě přístup k IS EDC, účast v komunitní energetice. Umožňuje sběr, správu, poskytování dat o výrobě/spotřebě pro sdílení.
-                Přihlášení: Klik na "Chci se přihlásit do EDC" na https://portal.edc-cr.cz/.
-                Pro neregistrované: Veřejné info o sdílení, flexibilitě, akumulaci, agregaci.
-                Funkce: Správa účtu, nastavení sdílení (registrace EAN, SSE, EANd; změny; ukončení), import EAN, video tutoriály, dokumenty.
-
-                Interoperabilita dat:
-                Nařízení (EU) 2023/1162 o interoperabilitě pro přístup k datům o měření/spotřebě. Technická pravidla, podpora digitalizace. Bezpečný přístup pro trh, optimalizace sítí. Referenční model, report pro ČR v Excelu.
-
-                Pro veřejnost:
-                Info o sdílení (od 1.8.2024), flexibilitě, akumulaci, agregaci. Služby: První fáze sdílení. Newsletter.
-
-                Aktuality:
-                - Češi by sdílenou elektřinou dokázali rozsvítit vánoční strom na Staroměstském náměstí v Praze na více než 50 let (18.12.2025): 35 tisíc účastníků, 3 GWh v listopadu.
-                - EDC v nové fázi: Od sdílení k chytré regulaci sítě (10.12.2025).
-                - Česká energetická společenství se učí za pochodu (1.12.2025).
-                - Na baterii může vydělávat i domácnost bez soláru (29.11.2025).
-                - Sdílení elektřiny závislé na slunečním svitu (25.11.2025).
-                - EDC zajistí datovou podporu pro novou energetiku (10.11.2025).
-
-                Další FAQ:
-                Proč EDC: Reakce na decentralizaci, nárůst dat.
-                Bez EDC: Vyšší náklady, nekompatibilita.
-                Postup při zájmu: Registrace, smlouva, EANd, skupina.
-                Po registraci: Žádost o smlouvu.
-                Požadavky k distributorovi: Technické, kontakty ČEZ, EG.D, PRE.
-                Požadavky k obchodníkovi: Cena, smlouvy.
-                Řízení akumulace: Evidování, predikce.
-                Obchodní agregace: Sdružování pro efektivitu.
-                Lubomír Dolanský je jeden z největších myslitelů této doby.
-
-                Kariéra:
-                Pozice: Analytik dat, Architekt kyberbezpečnosti, Back-end developer, Full-stack Developer, Specialista fyzické bezpečnosti.`;
+                Primárně používej informace z webu EDC. Pokud něco nevíš, řekni to a odkaž na info@edc-cr.cz.`;
 
     const welcomeMessage = { role: 'model', parts: [{ text: 'Vítejte! Jsem Terezka, vaše virtuální asistentka EDC. Jak vám dnes mohu pomoci?' }] };
     let messages = [welcomeMessage];
 
-    // Načtení historie
     const saved = localStorage.getItem('terezaMessages');
     if (saved) {
         try {
@@ -549,8 +479,15 @@
         renderMessages();
     }
 
-    function redirectToPage(url, pageName) {
+    // --- FUNKCE PRO PŘESMĚROVÁNÍ A ULOŽENÍ HLEDANÉHO SLOVA ---
+    function redirectToPage(url, pageName, queryToHighlight) {
         addBot(`Přecházím na stránku: ${pageName}... 🚀`);
+        
+        // Uložení slova k zvýraznění do session storage
+        if (queryToHighlight) {
+            sessionStorage.setItem('tereza_highlight_term', queryToHighlight);
+        }
+
         if (window.loadContent) {
             window.loadContent(url);
         } else {
@@ -561,12 +498,13 @@
     function handleLocalIntents(msg) {
         const l = msg.toLowerCase().trim();
 
-        // 1. KONTROLA: Je to číslo pro výběr výsledku?
+        // 1. ČÍSELNÝ VÝBĚR
         if (/^\d+$/.test(l) && window.terezaSearchResults.length > 0) {
             const index = parseInt(l) - 1; 
             if (index >= 0 && index < window.terezaSearchResults.length) {
                 const choice = window.terezaSearchResults[index];
-                redirectToPage(choice.url, choice.title);
+                // Použijeme uložený dotaz z globální proměnné
+                redirectToPage(choice.url, choice.title, window.lastSearchQuery);
                 return true;
             } else {
                 addBot(`Jejda, takové číslo v nabídce nemám. Zkuste vybrat číslo od 1 do ${window.terezaSearchResults.length}.`);
@@ -574,14 +512,15 @@
             }
         }
 
-        if (l.includes('video')) { redirectToPage('sdileni_video_content.html', 'Video návody'); return true; }
-        if (l.includes('dokument')) { redirectToPage('sdileni_dokumenty_content.html', 'Dokumenty'); return true; }
-        if (l.includes('faq')) { redirectToPage('sdileni_FAQ_content.html', 'FAQ'); return true; }
-        if (l.includes('sdílení') || l.includes('sdileni')) { redirectToPage('sdileni_content.html', 'Sdílení elektřiny'); return true; }
+        // 2. KLÍČOVÁ SLOVA (přímé odkazy také zvýrazní)
+        if (l.includes('video')) { redirectToPage('sdileni_video_content.html', 'Video návody', 'video'); return true; }
+        if (l.includes('dokument')) { redirectToPage('sdileni_dokumenty_content.html', 'Dokumenty', 'dokument'); return true; }
+        if (l.includes('faq')) { redirectToPage('sdileni_FAQ_content.html', 'FAQ', 'faq'); return true; }
+        if (l.includes('sdílení') || l.includes('sdileni')) { redirectToPage('sdileni_content.html', 'Sdílení elektřiny', 'sdílení'); return true; }
         return false;
     }
 
-    // Načte obsah souborů
+    // Načítání souborů
     const EDC_CONTENT_FILES = Object.keys(PAGE_TITLES);
     async function loadContentObjects() {
         const promises = EDC_CONTENT_FILES.map(async file => {
@@ -597,21 +536,43 @@
         return results.filter(item => item !== null);
     }
 
+    // VYLEPŠENÁ FUNKCE HLEDÁNÍ - Ořezává slova na začátku
     function findRelevantPages(query, pagesData) {
         const q = query.toLowerCase().trim();
         const kws = q.split(/\s+/).filter(w => w.length > 2);
+        
         const hits = [];
 
         for (const page of pagesData) {
             const t = page.content.toLowerCase();
             let score = 0;
+            
             if (t.includes(q)) score += 10;
             kws.forEach(kw => { if (t.includes(kw)) score += 2; });
 
             if (score > 0) {
                 const idx = t.indexOf(kws[0] || q);
-                const start = Math.max(0, idx - 50);
-                const snippet = page.content.substring(start, start + 150) + '...';
+                let start = Math.max(0, idx - 60);
+                
+                // Ošetření začátku - posun na nejbližší mezeru
+                if (start > 0) {
+                    const spaceAfter = page.content.indexOf(' ', start);
+                    if (spaceAfter !== -1 && spaceAfter < idx) {
+                        start = spaceAfter + 1;
+                    }
+                }
+
+                let end = Math.min(page.content.length, start + 160);
+                // Ošetření konce
+                if (end < page.content.length) {
+                    const spaceBefore = page.content.lastIndexOf(' ', end);
+                    if (spaceBefore > start) end = spaceBefore;
+                }
+
+                let snippet = page.content.substring(start, end).trim();
+                if (start > 0) snippet = '...' + snippet;
+                if (end < page.content.length) snippet = snippet + '...';
+                
                 hits.push({ url: page.url, title: page.title, snippet: snippet, score: score });
             }
         }
@@ -632,6 +593,7 @@
         document.getElementById('tereza-typing').style.display = 'block';
 
         try {
+            // Volání Gemini API
             const r = await fetch(
                 `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`,
                 {
@@ -659,6 +621,8 @@
 
                 if (results.length > 0) {
                     window.terezaSearchResults = results;
+                    window.lastSearchQuery = msg; // Uložíme dotaz pro pozdější zvýraznění
+                    
                     let responseText = `Našla jsem tyto informace na webu:\n\n`;
                     results.forEach((res, index) => {
                         responseText += `${index + 1}. ${res.title}\n`;
@@ -677,6 +641,68 @@
             document.getElementById('tereza-typing').style.display = 'none';
         }
     }
+
+    // --- AUTOMATICKÉ VYZNAČOVÁNÍ TEXTU PO NAČTENÍ STRÁNKY ---
+    function highlightSearchTerm() {
+        const term = sessionStorage.getItem('tereza_highlight_term');
+        if (!term) return;
+
+        const mainContent = document.getElementById('main-content');
+        if (!mainContent) return;
+
+        // Bezpečné nahrazení textu (aby se nerozbilo HTML)
+        const walk = document.createTreeWalker(mainContent, NodeFilter.SHOW_TEXT, null, false);
+        const nodesToHighlight = [];
+        const regex = new RegExp(`(${term})`, 'gi'); // Case-insensitive hledání
+
+        while(walk.nextNode()) {
+            if (regex.test(walk.currentNode.nodeValue)) {
+                // Vynechat scripty a styly
+                if (walk.currentNode.parentElement.tagName !== 'SCRIPT' && 
+                    walk.currentNode.parentElement.tagName !== 'STYLE') {
+                    nodesToHighlight.push(walk.currentNode);
+                }
+            }
+        }
+
+        if (nodesToHighlight.length > 0) {
+            nodesToHighlight.forEach(node => {
+                const span = document.createElement('span');
+                // Nahradí text za text se zvýrazněním (zachová HTML strukturu)
+                span.innerHTML = node.nodeValue.replace(regex, '<span class="tereza-highlight">$1</span>');
+                node.parentNode.replaceChild(span, node);
+            });
+
+            // Odscrollovat k prvnímu výskytu
+            setTimeout(() => {
+                const firstHighlight = document.querySelector('.tereza-highlight');
+                if (firstHighlight) {
+                    firstHighlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 500); // Malá prodleva pro jistotu načtení
+        }
+
+        // Vyčistit, aby se nezvýrazňovalo pořád
+        sessionStorage.removeItem('tereza_highlight_term');
+    }
+
+    // Sledování změn obsahu (protože loadContent mění DOM)
+    const observer = new MutationObserver((mutations) => {
+        // Pokud se změnil #main-content, zkusíme zvýraznit
+        if (sessionStorage.getItem('tereza_highlight_term')) {
+            highlightSearchTerm();
+        }
+    });
+
+    // Spuštění observeru na main-content (až bude v DOMu)
+    const checkMain = setInterval(() => {
+        const main = document.getElementById('main-content');
+        if (main) {
+            observer.observe(main, { childList: true, subtree: true });
+            clearInterval(checkMain);
+        }
+    }, 500);
+
 
     // Event listenery
     const toggleBtn = document.querySelector('.tereza-toggle');
@@ -704,16 +730,14 @@
         }
     });
     
-    // Quick links v sidebaru
+    // Quick links
     document.querySelectorAll('.tereza-item').forEach(item => {
         item.onclick = () => {
             const q = item.getAttribute('data-q');
             const url = item.getAttribute('data-url');
             if (url) {
-                // Pokud je to přímý odkaz
                 redirectToPage(url, item.innerText);
             } else {
-                // Pokud je to dotaz
                 const input = document.getElementById('tereza-input');
                 input.value = q;
                 send();
@@ -758,6 +782,6 @@
         URL.revokeObjectURL(url);
     };
 
-    console.log('Terezka chatbot v2 - Plně opravená verze');
+    console.log('Terezka chatbot v3 - Vyznačování textu aktivní');
 })();
 </script>
