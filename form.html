@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energetická komunita</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hero { background: #e3f2fd; padding: 60px 0; text-align: center; margin-bottom: 30px; }
+        #summarySection { display: none; background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px; border: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+
+    <div id="header-placeholder"></div>
+
+    <div class="hero">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Sdílení levné energie</h1>
+            <p class="lead">Nastavte si vlastní cenu a připojte se k naší sdílené síti.</p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form id="energyForm">
+                    <h4 class="mb-3 text-primary">Povinné údaje</h4>
+                    
+                    <div class="mb-3">
+                        <label for="priceSelect" class="form-label fw-bold">Cena za nasdílenou kWh</label>
+                        <select class="form-select" id="priceSelect" required>
+                            <option value="" disabled selected>Vyberte si kolik jste ochotni platit</option>
+                        </select>
+                        <div class="form-text">Rozmezí 0,25 Kč - 3,00 Kč (krok 0,25 Kč)</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-bold">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="vas@email.cz" required>
+                        <div class="form-text">Zadejte platný email (např. jan@post.cz).</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ean" class="form-label fw-bold">EAN odběrový</label>
+                        <input type="text" class="form-control" id="ean" placeholder="8591824XXXXXXXXXXX" maxlength="18" required>
+                        <div class="form-text">Zadejte prosím odběrový EAN z Vašeho vyúčtování (18 číslic).</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="smartMeter" class="form-label fw-bold">Máte již chytrý elektroměr?</label>
+                        <select class="form-select" id="smartMeter" required>
+                            <option value="" disabled selected>Vyberte možnost</option>
+                            <option value="Ano">Ano</option>
+                            <option value="Ne">Ne</option>
+                            <option value="Nevím">Nevím</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="consumptionType" class="form-label fw-bold">Typ odběru</label>
+                        <select class="form-select" id="consumptionType" required>
+                            <option value="" disabled selected>Vyberte typ odběru</option>
+                            <option value="Domácnost">Domácnost</option>
+                            <option value="Rodinný dům">Rodinný dům</option>
+                            <option value="Malá firma">Firma</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="consumption" class="form-label fw-bold">Spotřeba za uplynulé fakturační období - roční spotřeba (vyplňte celé číslo v MWh)</label>
+                        <input type="number" class="form-control" id="consumption" placeholder="Např. 2500" required min="1" step="1">
+                        <div class="form-text">Zadejte pouze celé číslo bez desetinných míst.</div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary w-100 mt-3 btn-lg" onclick="checkForm()">Zkontrolovat</button>
+                </form>
+
+                <div id="summarySection">
+                    <h3 class="mb-3">Kontrola údajů</h3>
+                    <ul class="list-group mb-4" id="summaryList"></ul>
+
+                    <div class="card mb-3">
+                        <div class="card-header fw-bold small">
+                            Obchodní podmínky a vymezení služby
+                        </div>
+                        <div class="card-body bg-light text-secondary" style="max-height: 200px; overflow-y: auto; font-size: 0.85rem;">
+                            <h6 class="text-dark">Článek X. Vymezení služby a odpovědnosti (EDC)</h6>
+                            
+                            <p><strong>1. Povaha služby</strong><br>
+                            Služba EDC (dále jen „Služba“) slouží výhradně jako komunikační platforma pro propojení poptávajícího (dále jen „Zákazník“) a potenciálního dodavatele (dále jen „Výrobce“). Provozovatel Služby nevystupuje jako prodejce, distributor, ani jako obchodní zástupce žádné ze stran. Činnost Provozovatele se omezuje na automatizované či manuální předání kontaktních údajů a specifikace poptávky Zákazníka vybraným Výrobcům.</p>
+
+                            <p><strong>2. Absence smluvního vztahu</strong><br>
+                            Mezi Provozovatelem a Zákazníkem nevzniká odesláním poptávky žádná kupní smlouva ani smlouva o dílo. Veškeré následné právní vztahy, zejména kupní smlouvy, dohody o dodávkách zboží či poskytování služeb, vznikají výlučně a přímo mezi Zákazníkem a Výrobcem. Provozovatel není účastníkem těchto smluvních vztahů a z těchto vztahů mu neplynou žádná práva ani povinnosti.</p>
+
+                            <p><strong>3. Vyloučení odpovědnosti</strong><br>
+                            Provozovatel nenese žádnou odpovědnost za:</p>
+                            <ul>
+                                <li>Pravdivost a správnost údajů poskytnutých Výrobcem.</li>
+                                <li>Kvalitu, bezpečnost, legálnost či dostupnost zboží nebo služeb nabízených Výrobcem.</li>
+                                <li>Splnění závazků ze strany Výrobce (např. dodání zboží, reklamace, záruční servis).</li>
+                                <li>Jakoukoli škodu (přímou či nepřímou) vzniklou Zákazníkovi v důsledku jednání s Výrobcem.</li>
+                            </ul>
+
+                            <p><strong>4. Negarance odezvy</strong><br>
+                            Provozovatel negarantuje, že oslovený Výrobce bude na poptávku Zákazníka reflektovat, že předloží cenovou nabídku, nebo že dojde k uzavření obchodu. Zákazník bere na vědomí, že rozhodnutí o navázání komunikace je plně v kompetenci Výrobce.</p>
+
+                            <p><strong>5. Ochrana a předání osobních údajů (GDPR)</strong><br>
+                            Vyplněním a odesláním poptávkového formuláře dává Zákazník výslovný souhlas Provozovateli se zpracováním vložených osobních údajů a jejich předáním třetím stranám (Výrobcům) za účelem vyřízení poptávky. Zákazník bere na vědomí, že po předání údajů Výrobci se zpracování těchto údajů řídí zásadami ochrany osobních údajů daného Výrobce.</p>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-light border mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="legalConsent">
+                            <label class="form-check-label small text-dark" for="legalConsent">
+                                <strong>Potvrzuji seznámení s podmínkami:</strong>
+                                Odesláním formuláře potvrzuji, že jsem se seznámil/a s výše uvedeným vymezením služby a souhlasím s předáním údajů výrobcům dle článku 5.
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="captchaInput" class="form-label fw-bold">
+                            Bezpečnostní otázka: Kolik je <span id="captchaQuestion" class="text-primary"></span>?
+                        </label>
+                        <input type="number" class="form-control" id="captchaInput" placeholder="Napište výsledek" style="width: 150px;">
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary" onclick="editForm()">Zpět k úpravám</button>
+                        <button class="btn btn-success flex-grow-1 fw-bold" onclick="submitForm()">Odeslat registraci</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/formscript.js"></script>
+</body>
+</html>

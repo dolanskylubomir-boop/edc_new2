@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energetická komunita - Registrace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hero { background: #e3f2fd; padding: 60px 0; text-align: center; margin-bottom: 30px; }
+        #summarySection { display: none; background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px; border: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Registrace výrobce</h1>
+            <p class="lead">Po registrace bude po splnění všech požadavků na cenu, vyhledán zaregistrovaný zájemce o sdílení, bude mu předán kontaktní email na výrobce. Výrobce bude infomován emailem, o možném kontaktování ze strany zájemce o sdílení.</p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form id="energyForm">
+                    <h4 class="mb-3 text-primary">Povinné údaje</h4>
+                    
+                    <div class="mb-3">
+                        <label for="priceSelect" class="form-label fw-bold">jakou požadujete cenu nasdílenou kWh</label>
+                        <select class="form-select" id="priceSelect" required>
+                            <option value="" disabled selected>Vyberte si z možností</option>
+                        </select>
+                        <div class="form-text">Rozmezí 0,25 Kč - 3,00 Kč (krok 0,25 Kč)</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-bold">Email uvedený v registraci v Portálu EDC</label>
+                        <input type="email" class="form-control" id="email" placeholder="vas@email.cz" required>
+                        <div class="form-text">Email musí souhlasit s registrací v Portálu EDC.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="userId" class="form-label fw-bold">ID výrobce - ID smlouvy v portálu EDC</label>
+                        <input type="text" class="form-control" id="userId" placeholder="12345" maxlength="5" pattern="\d{5}" required>
+                        <div class="form-text">Zadejte své 5místné ID číslo.</div>
+                    </div>
+
+                    <h4 class="mb-3 mt-4 text-primary">Technické údaje</h4>
+
+                    <div class="mb-3">
+                        <label for="smartMeter" class="form-label fw-bold">Požadujete u zákazníka již nainstalovaný chytrý elektroměr?</label>
+                        <select class="form-select" id="smartMeter" required>
+                            <option value="" disabled selected>Vyberte možnost</option>
+                            <option value="Ano">Ano</option>
+                            <option value="Ne">Ne</option>
+                            <option value="Nevím">Nevím</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="consumptionType" class="form-label fw-bold">Typ odběru</label>
+                        <select class="form-select" id="consumptionType" required>
+                            <option value="" disabled selected>Jaký preferujete typ odběru</option>
+                            <option value="Vše">Vše (bez omezení)</option>
+                            <option value="Domácnost">Domácnost</option>
+                            <option value="Rodinný dům">Rodinný dům</option>
+                            <option value="Malá firma">Firma</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="consumption" class="form-label fw-bold">Jakou by měl mít zákazník roční spotřebu v MWh za rok? Zadejte množství od.</label>
+                        <input type="number" class="form-control" id="consumption" placeholder="Např. 2500" required min="1" step="1">
+                        <div class="form-text">Zadejte pouze celé číslo bez desetinných míst.</div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary w-100 mt-3 btn-lg" onclick="checkForm()">Zkontrolovat</button>
+                </form>
+
+                <div id="summarySection">
+                    <h3 class="mb-3">Kontrola údajů</h3>
+                    <ul class="list-group mb-4" id="summaryList"></ul>
+
+                    <div class="card mb-3">
+                        <div class="card-header fw-bold small">
+                            Obchodní podmínky a vymezení služby
+                        </div>
+                        <div class="card-body bg-light text-secondary" style="max-height: 200px; overflow-y: auto; font-size: 0.85rem;">
+                            <h6 class="text-dark">Článek X. Vymezení služby a odpovědnosti (EDC)</h6>
+                            <p><strong>1. Ověření registrace</strong><br>
+                            Odesláním formuláře dochází k ověření, zda je výrobce (identifikovaný pomocí ID a Emailu) veden v databázi Portálu EDC. Pokud údaje nesouhlasí, registrace nebude dokončena.</p>
+                            
+                            <p><strong>2. Zpracování údajů</strong><br>
+                            Úspěšná registrace bude zaznamenána do systému. Uživatel souhlasí s tím, že pro účely párování bude u jeho záznamu evidován příznak aktivní registrace ("ANO").</p>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-light border mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="legalConsent">
+                            <label class="form-check-label small text-dark" for="legalConsent">
+                                <strong>Potvrzuji seznámení s podmínkami:</strong>
+                                Odesláním formuláře potvrzuji správnost údajů a souhlasím s jejich ověřením.
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="captchaInput" class="form-label fw-bold">
+                            Bezpečnostní otázka: Kolik je <span id="captchaQuestion" class="text-primary"></span>?
+                        </label>
+                        <input type="number" class="form-control" id="captchaInput" placeholder="Napište výsledek" style="width: 150px;">
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary" onclick="editForm()">Zpět k úpravám</button>
+                        <button class="btn btn-success flex-grow-1 fw-bold" onclick="submitForm()">Odeslat registraci</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/vyrobce.js"></script>
+</body>
+</html>
