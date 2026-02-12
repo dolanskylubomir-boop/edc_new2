@@ -61,6 +61,18 @@
     </style>
 
     <script src="js/slovnik-data.js" defer></script>
+
+
+<!-- Registrace aplikace mobilní-->
+    <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#4285f4">
+        <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js');
+            });
+        }
+        </script>
 </head>
 
 <body>
