@@ -63,7 +63,7 @@
     <script src="js/slovnik-data.js" defer></script>
 
 
-<!-- Registrace aplikace mobilní-->
+<!-- Registrace aplikace mobilní
     <link rel="manifest" href="manifest.json">
         <meta name="theme-color" content="#4285f4">
         <script>
@@ -72,7 +72,7 @@
             navigator.serviceWorker.register('sw.js');
             });
         }
-        </script>
+        </script>-->
 </head>
 
 <body>
@@ -435,6 +435,18 @@
         window.closeModal = function(id) {
             const modal = document.getElementById(id);
             if (modal) {
+                // --- NOVÉ: Zastavení videa v modálu ---
+                const iframe = modal.querySelector('iframe');
+                if (iframe) {
+                    // Uložíme si aktuální URL videa
+                    const currentSrc = iframe.getAttribute('src');
+                    // Vyprázdníme src, což okamžitě zastaví přehrávání
+                    iframe.setAttribute('src', ''); 
+                    // Vrátíme tam původní URL, aby bylo video připravené pro příští otevření (ale nebude hrát)
+                    iframe.setAttribute('src', currentSrc);
+                }
+                // --------------------------------------
+
                 modal.style.display = 'none';
                 document.body.classList.remove('modal-open');
             }
