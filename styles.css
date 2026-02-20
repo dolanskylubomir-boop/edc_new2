@@ -3223,6 +3223,120 @@ const focusStyles = `
 }
 /* Přidejte tyto styly do styles.css (nebo do <style> tagu v head, pokud chcete inline) */
 
+/* --- SYSTÉMOVÝ BANNER - ZCELA SAMOSTATNÝ --- */
+.system-banner-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 40px;
+    background-color: #05282a; 
+    color: #94e3c2;            
+    z-index: 1000000;          
+    display: none;             
+    align-items: center;
+    justify-content: center;
+    padding: 10px 50px; /* Větší padding vpravo kvůli křížku */
+    box-sizing: border-box;
+    border-bottom: 2px solid #94e3c2;
+    font-family: 'Inter', sans-serif;
+}
+
+.system-banner-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    max-width: 1200px;
+}
+
+.system-banner-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+#system-banner-text {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+.system-banner-close {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: 1px solid rgba(148, 227, 194, 0.3); /* Jemné ohraničení ve barvě EDC */
+    color: #94e3c2;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.system-banner-close:hover {
+    background-color: #94e3c2;
+    color: #05282a;
+}
+
+/* --- RESPONZIVITA --- */
+
+/* Tablety a menší monitory */
+@media (max-width: 1024px) {
+    #system-banner-text {
+        font-size: 14px;
+    }
+}
+
+/* Mobily */
+@media (max-width: 768px) {
+    .system-banner-fixed {
+        padding: 8px 15px;
+    }
+    
+    .system-banner-inner {
+        gap: 8px;
+    }
+
+    #system-banner-text {
+        font-size: 13px;
+    }
+
+    .system-banner-icon {
+        font-size: 1rem;
+    }
+}
+
+/* Velmi malé telefony */
+@media (max-width: 480px) {
+    #system-banner-text {
+        font-size: 12px;
+    }
+    
+    /* Na velmi malých displejích můžeme skrýt ikonu, aby zbyl prostor pro text */
+    .system-banner-icon {
+        display: none;
+    }
+}
+/* Responzivní úprava pro mobil */
+@media (max-width: 768px) {
+    .system-banner-fixed {
+        padding: 10px 40px 10px 15px; /* Menší mezery na mobilu */
+    }
+    .system-banner-close {
+        right: 8px;
+        width: 28px;
+        height: 28px;
+        font-size: 20px;
+    }
+}
+
 /* Základní styly pro full-width varovný banner */
 .warning-banner {
     position: fixed;
