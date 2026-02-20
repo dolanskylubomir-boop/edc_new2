@@ -97,15 +97,17 @@
         <button id="reject-all">Odmítnout vše</button>
     </div>
 
-    <!--Banner pro hlášky nedostupnosti-->
-    <div id="warning-banner" class="warning-banner" style="display: none;">
-        <div class="warning-content">
-            <span class="warning-icon">⚠️</span>
-            <span id="warning-text">Výchozí varovný text – upravte podle potřeby.</span>
-            <span class="warning-icon">⚠️</span>
+    <!--Banner pro hlášky stránek ve výytavbě  text se doplní v banner.js!!!!! pro spuštění se musí odkomentovat volání banner.js!!!!!-->
+    <div id="system-banner" class="system-banner-fixed" style="display: none;">
+        <div class="system-banner-inner">
+            <span class="system-banner-icon">📢</span>
+                    <span id="system-banner-text">Zde bude text systémové hlášky.</span>
+            <span class="system-banner-icon">⚠️</span>
         </div>
-        <button class="warning-close" onclick="closeWarningBanner()" aria-label="Zavřít banner">×</button>
+        <button class="system-banner-close" onclick="closeSystemBanner()" aria-label="Zavřít banner">×</button>
     </div>
+
+
 
     <!-- Hlavní obsah – dynamicky nahrazován -->
     <main id="main-content" class="container">
@@ -1367,8 +1369,8 @@
 
 
 
-<!-- pRO SPUŠTĚNÍ HLÁŠKY NEDOSTUPNOSTI JE NUTNÉ ODKOMENTOVAT BOLÁNÍ !!!!!!!!BANNER NEDSOTUPNOST!!!!!!!!!!!
-    <script src="js/banner.js" defer></script>-->
+<!-- pRO SPUŠTĚNÍ HLÁŠKY NEDOSTUPNOSTI JE NUTNÉ ODKOMENTOVAT BOLÁNÍ !!!!!!!!BANNER NEDSOTUPNOST!!!!!!!!!!!-->
+    <script src="js/banner.js" defer></script>
 
     <script src="js/side-panel.js" defer></script>
 
