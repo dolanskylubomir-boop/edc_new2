@@ -39,6 +39,43 @@
             <li>Do procesů akumulace elektřiny v EDC nebude žádným způsobem (aktivně, ani informačně) zapojen obchodník v roli dodavatele či subjektu zúčtování, ten bude dostávat až finální podklad pro fakturaci standardním způsobem v DÚF od PDS přes OTE. </li>
             <li>Měření v EANo, ve kterém bude vyhodnocována akumulace, musí být zajištěno průběhovým měřením v souladu s vyhláškou o měření, a to jak v případě fakturačního měření PDS/PPS tak podružného měření výroby. </li>
             <li>Vyhodnocení akumulace elektřiny není navázáno na vyhodnocení sdílení či flexibility, probíhá nezávisle na těchto službách a není tedy nutno omezovat souběh akumulace se sdílením elektřiny či poskytováním flexibility.</li>
+        </ul><br><br>
+
+         <img src="obrázky/aku1.png" alt="Registrace vyhodnocení flexibility" style="max-width: 100%; height: auto;"> 
+
+        <br><br/>
+
+        <h2>Registrace vyhodnocení akumulace elektřiny</h2>
+        <h3>1. Žádost o registraci EANO (Držitel SoP)</h3>
+        <ul>
+            <li>Žádá elektronicky, přes webový formulář EDC o registraci EANO v IS EDC.</li>
+            <li>Žádost obsahuje: Identifikátor EANo, požadovaný termín registrace od-do.</li>
+            <li>Žádost se bude podávat do 10:00 desátého pracovního dne před požadovaným termínem registrace, kterým může být pouze 1. den v měsíci.</li>
+        </ul>
+
+        <h3>2. Ověření TKD OTE (OTE)</h3>
+        <ul>
+            <li>Zasílá do EDC na žádost technická kmenová data pro ověření možnosti vyhodnocení akumulace v EANo.</li>
+            <li>Podmínkou pro schválení registrace je splnění podmínek: EANo je u OTE registrován pro odběr, EANo má průběhový typ měření, u EANo je registrován příznak o instalaci zařízení pro ukládání elektřiny, EANo má vyplněn atribut pro párový EANd.</li>
+        </ul>
+
+        <h3>3. Ověření držitele a náležitostí SoP (PDS/PPS)</h3>
+        <ul>
+            <li>PDS/PPS na žádost EDC provádí ověření identity držitele SoP a splnění náležitostí SoP na připojení ZUE.</li>
+            <li>V případě, že SoP neobsahuje zařízení pro ukládání elektřiny, může být součástí procesu i uzavření SoP nebo dodatku k SoP.</li>
+            <li>Termín pro vyjádření PDS k dotazu je předběžně nastaven na 30 dní od přijetí dotazu.</li>
+        </ul>
+
+        <h3>4. Ověření TKD OTE (OTE)</h3>
+        <ul>
+            <li>Zasílá na EDC na žádost technická kmenová data za celý pár (EANd i EANo) k uložení aktualizovaných údajů do DB IS EDC.</li>
+            <li>Podmínkou pro schválení registrace je splnění podmínek: EANd/EANo existují a jsou v IS OTE registrovány a k danému termínu platné, v EANo je připojena akumulace (nový příznak v TKD), EANd i EANo na sebe vzájemně odkazují (prostřednictvím atributu SOPM).</li>
+        </ul>
+
+        <h3>5. Vyhodnocení žádosti o registraci EANO (EDC)</h3>
+        <ul>
+            <li>EDC vyhodnocuje výstup odpovědi od OTE a PDS/PPS a žádost buď schválí, nebo zamítne.</li>
+            <li>V případě schválení jsou o registraci vyhodnocení akumulace informováni držitel SoP, PDS/PPS a OTE.</li>
         </ul>
 
         <br><br/>
@@ -54,5 +91,17 @@
             <li><strong>Ukončení registrace:</strong> Žádost o ukončení registrace elektronicky. </li>
             <li><strong>Nová registrace po 1.8.2026:</strong> Pokud je akumulace již registrována u PDS, nutná nová registrace v EDC (nepřevádí se automaticky). </li>
         </ul>
+
+        <br><br/>
+
+        <h2>Výměna dat při vyhodnocení akumulace elektřiny</h2>
+        <ul>
+            <li><strong>Držitel SoP:</strong> Vyřizuje Smlouvu o přístupu do IS EDC, zajišťuje registraci vyhodnocení akumulace a předává měsíční výkaz akumulace prostřednictvím EDC Web Portálu. Následně získává výsledky vyhodnocení pro další fakturaci.</li>
+            <li><strong>EDC:</strong> Komunikuje s OTE a PDS/PPS prostřednictvím B2B rozhraní. Od PDS/PPS a OTE přijímá měření (LP15) a technická kmenová data (TKD EAN). Následně zpracovává a odesílá výsledky vyhodnocení a data pro DÚF (Doklad o Uplatnění Flexibility/Fakturaci).</li>
+            <li><strong>PDS/PPS:</strong> Ověřuje Smlouvu o připojení (SoP), zprostředkovává průběhové měření (LP15) a řeší dotazy na technická kmenová data (TKD s příznakem ZUE).</li>
+            <li><strong>OTE:</strong> Eviduje technická kmenová data (TKD EANO s příznakem ZUE) a přijímá od EDC výsledky vyhodnocení (Data DÚF).</li>
+        </ul><br><br>
+
+        <img src="obrázky/aku2.png" alt="Registrace vyhodnocení flexibility" style="max-width: 100%; height: auto;"> <br>
     </div>
 </section>
