@@ -1,85 +1,58 @@
-
 <section class="aktuality">
     <div class="container">
-    <h1>Akumulace energie – obecné informace</h1>
-        <h2>Co je akumulace energie</h2>
-        <p>Akumulace energie je proces ukládání energie pro její pozdější využití, kdy se energie vyrobená v jednom okamžiku uskladní ve vhodné formě a čase se zpět uvolní pro spotřebu. </p>
-        <p>V energetice jde typicky o ukládání elektřiny v době přebytků a její využití v době, kdy výroba neodpovídá aktuální spotřebě, což zvyšuje efektivitu využití zdrojů. </p>
+        <h1>Akumulace elektřiny</h1>
+        
+        <h2>Účel UC akumulace elektřiny</h2>
+        <p>Účelem UC akumulace elektřiny je zamezení efektu tzv. double-chargingu, ke kterému dochází při akumulaci elektřiny, když elektřina nabitá do akumulace z DS a následně vrácená do DS podléhá regulovaným platbám jak na straně provozovatele zařízení pro ukládání elektřiny tak na straně konečného spotřebitele.</p>
+        <p>Úkolem EDC je stanovení množství akumulované elektřiny tak, aby mohlo být zohledněno ve fakturaci regulovaných plateb. </p>
+        <p>Řešení MVP2 bude využívat zjednodušenou tzv. „Hájkovu“ metodu vyhodnocení vycházející z měsíčních hodnot: </p>
+        <ul>
+            <li>Pro vyhodnocení akumulace bude EDC vycházet z měřených dat fakturačního a podružného měření předávaného formou měsíčního výkazu. </li>
+            <li>Vyhodnocení bude EDC provádět po ukončení měsíce ze sumárních hodnot za daný měsíc. </li>
+            <li>Vyhodnocení objemu akumulované elektřiny se stanoví dle vzorce: <strong>Množství akumulované elektřiny = max[Dodávka do DS - Výroba v PM; 0]</strong>. </li>
+        </ul>
 
-        <h2>Proč je akumulace důležitá</h2>
-        <p>Akumulace pomáhá vyrovnávat rozdíly mezi výrobou a spotřebou, což je klíčové u obnovitelných zdrojů se silně proměnlivou výrobou, jako jsou fotovoltaika a větrné elektrárny. </p>
-        <p>Umožňuje využít přebytečnou elektřinu, která by byla jinak omezena nebo ztracena, a zvyšuje soběstačnost domácností, firem i celého energetického systému. </p>
+        <br><br/>
 
-        <h2>Základní princip akumulace</h2>
-        <p>Základním principem je zachycení přebytečné energie v době, kdy je výroba vyšší než spotřeba, a její uložení ve formě chemické, mechanické, tepelné nebo elektrické energie pro pozdější využití. </p>
-        <p>Při pozdějším využití dochází k opačnému procesu, kdy se uložená energie opět mění na elektřinu nebo teplo podle potřeb uživatele nebo sítě. </p>
+        <h2>Povinnosti EDC při zohledňování ukládání elektřiny </h2>
+        <p>EDC je povinno:</p>
+        <ul>
+            <li>Evidovat registrovaná předávací místa pro zohlednění ukládání elektřiny a předávat informace o registraci operátorovi trhu, provozovateli distribuční soustavy a provozovateli zařízení pro ukládání elektřiny, jehož předávací místo je registrované pro zohlednění ukládání elektřiny.</li>
+            <li>Zpracovávat naměřené a vyhodnocené údaje o dodávkách a odběrech elektřiny pro zohlednění ukládání elektřiny v předávacím místě; pokud datové centrum zpracovává a vyhodnocuje údaje z podružného měřicího zařízení, zohledňuje ukládání elektřiny v předávacím místě pouze v případě, že jsou výroba elektřiny v předávacím místě nebo dodávky a odběry elektřiny zařízením pro ukládání elektřiny v předávacím místě podružně měřeny stanoveným měřidlem podle zákona o metrologii.</li>
+            <li>Poskytovat: 
+                <ul>
+                    <li>výrobci, provozovateli zařízení pro ukládání elektřiny a zákazníkovi naměřené a vyhodnocené údaje o dodávkách a odběrech elektřiny se zohledněním ukládání elektřiny, </li>
+                    <li>operátorovi trhu naměřené a vyhodnocené údaje o dodávkách a odběrech elektřiny se zohledněním ukládání elektřiny a další související údaje a informace nezbytné pro plnění jeho povinností, </li>
+                    <li>provozovateli přenosové soustavy naměřené a vyhodnocené údaje o dodávkách a odběrech elektřiny se zohledněním ukládání elektřiny a další údaje nezbytné pro vyúčtování služeb přenosové soustavy a podpůrných služeb a další související informace a údaje nezbytné pro plnění jeho povinností a </li>
+                    <li>provozovateli distribuční soustavy naměřené a vyhodnocené údaje o dodávkách a odběrech elektřiny se zohledněním ukládání elektřiny a další údaje nezbytné pro vyúčtování služeb distribuční soustavy a nefrekvenčních podpůrných služeb a další související informace a údaje nezbytné pro plnění jeho povinností. </li>
+                </ul>
+            </li>
+        </ul>
 
-        <h2>Hlavní oblasti použití</h2>
-        <p>Akumulace se využívá v přenosové a distribuční soustavě pro regulaci frekvence, vykrývání špiček a integraci obnovitelných zdrojů a také v decentrální energetice v domácnostech a firmách. </p>
-        <p>Na úrovni koncových zákazníků umožňuje posun spotřeby do levnějších hodin, zálohování při výpadku sítě a lepší využití vlastní výroby z fotovoltaických systémů. </p>
+        <br><br/>
 
-        <h1>Typy akumulace energie</h1>
+        <h2>Okrajové podmínky - akumulace elektřiny </h2>
+        <ul>
+            <li>Pro prvotní start k 1.8.2026 se nepředpokládá migrace již registrovaných zařízení pro vyhodnocení akumulace u PDS, jejich „převod" do EDC bude zajištěn standardním procesem registrace u EDC obdobně jako u sdílení v bytových domech. </li>
+            <li>Vyhodnocení objemu elektřiny odebrané ze soustavy, akumulované a zpětně dodané do soustavy bude provedeno pouze zjednodušeným postupem na bázi měsíčních hodnot (někdy nazýván také jako „Hájkova metoda"). </li>
+            <li>Předávání informací z/do EDC bude zajišťováno prostřednictvím držitele SoP bez ohledu na to, zda provozovatelem zařízení akumulace či výrobcem je stejný nebo jiný subjekt. </li>
+            <li>Do procesů akumulace elektřiny v EDC nebude žádným způsobem (aktivně, ani informačně) zapojen obchodník v roli dodavatele či subjektu zúčtování, ten bude dostávat až finální podklad pro fakturaci standardním způsobem v DÚF od PDS přes OTE. </li>
+            <li>Měření v EANo, ve kterém bude vyhodnocována akumulace, musí být zajištěno průběhovým měřením v souladu s vyhláškou o měření, a to jak v případě fakturačního měření PDS/PPS tak podružného měření výroby. </li>
+            <li>Vyhodnocení akumulace elektřiny není navázáno na vyhodnocení sdílení či flexibility, probíhá nezávisle na těchto službách a není tedy nutno omezovat souběh akumulace se sdílením elektřiny či poskytováním flexibility.</li>
+        </ul>
 
-        <h2>Klasifikace podle principu</h2>
-        <p>Podle principu a formy sekundární energie lze akumulační systémy rozdělit na mechanické, tepelné, chemické, elektrochemické a elektrické systémy. </p>
-        <p>Každý typ má odlišné parametry z hlediska účinnosti, doby odezvy, kapacity, životnosti a vhodného měřítka použití. </p>
+        <br><br/>
 
-        <h2>Elektrochemická akumulace (baterie)</h2>
-        <p>Elektrochemická akumulace využívá baterie, ve kterých se elektrická energie přeměňuje na chemickou a zpět prostřednictvím reverzibilních elektrochemických reakcí. </p>
-        <p>Nejběžnější jsou dnes lithium‑iontové baterie díky vysoké energetické hustotě, účinnosti a dlouhé cyklické životnosti, používají se v domácích úložištích, elektromobilech i velkých bateriových blocích pro síťové služby. </p>
-
-        <h2>Mechanická akumulace</h2>
-        <p>Mechanické systémy ukládají energii ve formě potenciální nebo kinetické energie, typicky formou přečerpávacích vodních elektráren nebo setrvačníkových systémů. </p>
-        <p>Přečerpávací elektrárny ukládají energii čerpáním vody do horní nádrže v době přebytku a při odběru ji využívají pro výrobu elektřiny, zatímco setrvačníky ukládají energii v rotujícím hmotném tělese a poskytují velmi rychlou, ale krátkodobou dodávku. </p>
-
-        <h2>Tepelná akumulace</h2>
-        <p>Tepelná akumulace ukládá energii ve formě tepla nebo chladu, například v zásobnících horké vody, roztavených solích nebo materiálech se změnou skupenství. [web:10]</p>
-        <p>Může sloužit jak pro dodávku tepla do soustav vytápění a průmyslových procesů, tak v kombinaci s tepelnými oběhy i pro zpětnou výrobu elektřiny (např. koncepty Carnotových baterií). [web:10]</p>
-
-        <h2>Chemická akumulace (plynná paliva)</h2>
-        <p>Chemická akumulace využívá přeměnu elektřiny na chemickou energii v palivech, typicky ve formě vodíku nebo syntetických plynů a paliv. </p>
-        <p>Elektrolýzou vody lze v době přebytků vyrábět vodík, který se následně využije v průmyslu, dopravě, plynových turbínách nebo palivových článcích k výrobě elektřiny a tepla. </p>
-
-        <h2>Elektrická akumulace (superkapacitory a další)</h2>
-        <p>Elektrická akumulace zahrnuje technologie jako superkapacitory, které ukládají energii přímo v elektrickém poli a jsou vhodné pro krátkodobé vykrývání rychlých změn výkonu. </p>
-        <p>Tyto systémy mají velmi rychlou odezvu a vysoký počet cyklů, ale obvykle nižší energetickou hustotu než bateriové systémy, takže doplňují jiné typy akumulace. </p>
-
-        <h1>Akumulace v české a evropské energetice</h1>
-
-        <h2>Role akumulace pro sítě a OZE</h2>
-        <p>Akumulace umožňuje připojovat větší množství obnovitelných zdrojů do soustavy tím, že vyrovnává jejich kolísající výrobu a pomáhá udržovat stabilitu frekvence a napětí. </p>
-        <p>V evropském kontextu je akumulace považována za klíčový prvek dekarbonizace, protože umožňuje lépe využít elektřinu z větru a slunce místo záložních fosilních zdrojů. </p>
-
-        <h2>Právní a tržní rámec</h2>
-        <p>V EU i v ČR se postupně vytváří legislativní rámec, který definuje zařízení pro akumulaci elektřiny, jejich provoz a možnost účasti na trzích se službami výkonové rovnováhy a flexibility. </p>
-        <p>Nové energetické legislativy zavádějí pojmy akumulace, agregace a flexibility a otevírají prostor pro zapojení akumulačních zařízení jak u provozovatelů sítí, tak u koncových zákazníků. </p>
-
-        <h2>Typické provozní režimy</h2>
-        <p>Akumulační zařízení může být připojeno za odběrným místem zákazníka a sloužit k využití vlastní výroby z fotovoltaiky, zálohování při výpadku sítě nebo ke snížení rezervovaného příkonu. </p>
-        <p>Jiné režimy zahrnují akumulaci přímo u výrobního zdroje nebo samostatnou akumulaci poskytující služby sítě, například vykrývání špiček nebo regulaci frekvence. </p>
-
-        <h1>Akumulace pro domácnosti a firmy</h1>
-
-        <h2>Domácí bateriová úložiště</h2>
-        <p>V domácnostech se akumulace elektřiny realizuje především prostřednictvím bateriových úložišť, která ukládají elektřinu vyrobenou z fotovoltaických panelů pro spotřebu mimo dobu výroby. </p>
-        <p>Takový systém zvyšuje energetickou soběstačnost domácnosti, umožňuje přenést část spotřeby do večerních hodin a může sloužit jako záloha při výpadku distribuční sítě. </p>
-
-        <h2>Akumulace v podnicích</h2>
-        <p>Firmy využívají akumulaci pro optimalizaci odběrových diagramů, snižování špičkového příkonu a lepší využití vlastní výroby z decentralizovaných zdrojů, typicky fotovoltaických elektráren. </p>
-        <p>V některých případech využívají podniky akumulační systémy také pro poskytování služeb výkonové rovnováhy nebo jako součást záložních zdrojů pro kritické technologie. </p>
-
-        <h2>Výhody a omezení pro koncové uživatele</h2>
-        <p>Mezi hlavní výhody patří snížení nákladů na elektřinu, vyšší soběstačnost, možnost lepšího využití vlastní výroby a zvýšení bezpečnosti dodávky díky záloze. </p>
-        <p>Omezeními jsou pořizovací náklady, omezená kapacita, účinnost cyklu nabití–vybití a nutnost vhodně dimenzovat velikost akumulace vzhledem k výrobě a spotřebě. </p>
-
-        <h1>Budoucnost akumulace energie</h1>
-
-        <h2>Technologický vývoj</h2>
-        <p>Očekává se další pokles cen bateriových technologií, zvyšování jejich energetické hustoty a životnosti a rozvoj nových typů baterií, například sodíkových, pevných elektrolytů nebo hybridních systémů. </p>
-        <p>Souběžně se rozvíjejí koncepty velkokapacitních tepelných úložišť, vodíkových technologií a kombinovaných systémů, které propojují více forem akumulace do jednoho řešení. [web:10]</p>
-
-        <h2>Akumulace jako součást flexibilní energetiky</h2>
-        <p>Akumulace tvoří spolu s řízenou spotřebou a agregací flexibilních zdrojů základ budoucí chytré energetiky, kde se výroba a spotřeba dynamicky přizpůsobují aktuálním podmínkám. </p>
-        <p>Rozšíření akumulačních zařízení v domácnostech, průmyslu i na úrovni sítí umožní lépe zvládnout rostoucí podíl obnovitelných zdrojů a snížit závislost na fosilních palivech. </p>
-        </div>
-    </section>
+        <h2>Shrnutí pro provozovatele ZUE / držitel SOP </h2>
+        <ul>
+            <li><strong>Smlouva o přístupu:</strong> Uzavření smlouvy o přístupu do IS EDC jako vstupní podmínka. </li>
+            <li><strong>Registrace:</strong> Registrace EANo pro vyhodnocení akumulace držitelem SoP a splnění náležitostí SoP na připojení ZUE, termín odpovědi 30 dní. </li>
+            <li><strong>Průběhové měření:</strong> Zajištění průběhového měření v EANo v souladu s vyhláškou o měření u PDS/PPS. </li>
+            <li><strong>Měsíční výkaz:</strong> Zasílání měsíčního výkazu se sumou výroby do EDC od 2. PD do 10. KD nebo 6. PD následujícího měsíce.</li>
+            <li>Provozovatel stand-alone akumulace (bez výrobny v PM) nemusí zadávat výkaz. </li>
+            <li><strong>Příjem výsledků vyhodnocení:</strong> Získávání údajů o akumulované elektřině od EDC pro vyúčtování služeb DS/PS. </li>
+            <li><strong>Ukončení registrace:</strong> Žádost o ukončení registrace elektronicky. </li>
+            <li><strong>Nová registrace po 1.8.2026:</strong> Pokud je akumulace již registrována u PDS, nutná nová registrace v EDC (nepřevádí se automaticky). </li>
+        </ul>
+    </div>
+</section>
