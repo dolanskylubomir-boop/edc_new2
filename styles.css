@@ -185,6 +185,63 @@ header {
   left: 10px;
 }
 
+/* ===================================================================
+   HLAVIČKA - LOGO A ODKAZ NA KALENDÁŘ
+   =================================================================== */
+.logo-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.calendar-link-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    background-color: var(--primary); /* Stejná zelená jako u tlačítka Zpět */
+    color: #0a3d3d;                  /* Tmavé písmo pro dobrou čitelnost na zelené */
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(148, 227, 194, 0.2);
+}
+
+.calendar-link-top:hover,
+.calendar-link-top:focus {
+    transform: translateY(-2px);
+    background-color: #7dd1b1; /* Mírně tmavší zelená při hoveru */
+    box-shadow: 0 6px 15px rgba(148, 227, 194, 0.4);
+    color: #000;
+}
+
+.calendar-icon-svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Skrytí textu kalendáře na mobilu pro úsporu místa */
+@media (max-width: 600px) {
+    .calendar-link-top span {
+        display: none;
+    }
+    .calendar-link-top {
+        padding: 8px;
+        border-radius: 50%;
+    }
+    .logo-group {
+        gap: 8px;
+    }
+}
+
 /* Hamburger menu + animovaný křížek */
 .hamburger {
     display: none;
