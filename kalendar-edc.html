@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalendář EDC - Registrační lhůty</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --holiday-bg: #fff9db;
+            --holiday-text: #e67e22;
+            --deadline-bg: #e3f2fd;
+            --deadline-border: #2196f3;
+            --ean-deadline-bg: #fee2e2;
+            --ean-deadline-border: #ef4444;
+            --weekend-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --home-btn-color: rgb(148, 227, 194);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .calendar-card {
+            background: white;
+            width: 100%;
+            max-width: 1100px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Hlavička */
+        .calendar-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .month-nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .month-nav h2 {
+            font-size: 1.5rem;
+            min-width: 200px;
+            text-align: center;
+            text-transform: capitalize;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn-external {
+            background: #e74c3c;
+            border: none;
+        }
+
+        .btn-external:hover {
+            background: #c0392b;
+        }
+
+        .btn-home {
+            background-color: var(--home-btn-color);
+            color: #2c3e50;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-home:hover {
+            background-color: rgb(128, 207, 174);
+            color: #2c3e50;
+        }
+
+        /* Mřížka kalendáře */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            border-left: 1px solid var(--border-color);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .weekday {
+            background: #f1f3f5;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #495057;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .day-cell {
+            min-height: 110px;
+            padding: 8px;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .day-number {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #212529;
+        }
+
+        .empty-cell {
+            background: #fcfcfc;
+        }
+
+        /* Speciální stavy */
+        .is-weekend {
+            background-color: var(--weekend-bg);
+        }
+        
+        .is-weekend .day-number {
+            color: #adb5bd;
+        }
+
+        .is-holiday {
+            background-color: var(--holiday-bg);
+        }
+
+        .holiday-name {
+            font-size: 0.75rem;
+            color: var(--holiday-text);
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        .is-deadline {
+            background-color: var(--deadline-bg);
+            border: 2px solid var(--deadline-border) !important;
+            z-index: 1;
+        }
+
+        .is-ean-deadline {
+            background-color: var(--ean-deadline-bg);
+            border: 2px solid var(--ean-deadline-border) !important;
+            z-index: 1;
+        }
+
+        .deadline-tag {
+            color: white;
+            font-size: 0.7rem;
+            padding: 4px;
+            border-radius: 4px;
+            line-height: 1.2;
+            margin-top: auto;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .tag-reg { background: var(--deadline-border); }
+        .tag-ean { background: var(--ean-deadline-border); }
+
+        .is-today {
+            box-shadow: inset 0 0 0 2px var(--accent-color);
+        }
+
+        /* Legenda */
+        .legend {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 0.85rem;
+            background: #fafafa;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .box {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Responzivita */
+        @media (max-width: 768px) {
+            .calendar-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .day-cell {
+                min-height: 90px;
+                padding: 4px;
+            }
+            .day-number { font-size: 0.9rem; }
+            .holiday-name, .deadline-tag { font-size: 0.65rem; }
+            .weekday { padding: 8px 2px; font-size: 0.75rem; }
+        }
+
+        @media print {
+            .calendar-header button, .btn-external, .legend {
+                display: none !important;
+            }
+            body { padding: 0; background: white; }
+            .calendar-card { box-shadow: none; border: 1px solid #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="calendar-card">
+    <header class="calendar-header">
+        <div class="month-nav">
+            <button onclick="changeMonth(-1)">← Předchozí</button>
+            <h2 id="monthDisplay">Leden 2024</h2>
+            <button onclick="changeMonth(1)">Další →</button>
+        </div>
+        <div class="header-actions">
+            <button class="btn-home" onclick="window.location.href='index.html'">Domů</button>
+            <button class="btn-external" onclick="window.open('https://portal.edc-cr.cz/', '_blank')">Portál EDC</button>
+        </div>
+    </header>
+
+    <div class="calendar-grid" id="calendarGrid">
+        <!-- Generováno přes JS -->
+    </div>
+
+    <footer class="legend">
+        <div class="legend-item">
+            <div class="box" style="background: var(--ean-deadline-bg); border-color: var(--ean-deadline-border)"></div>
+            <span><strong>Ukončení EAN:</strong> 11. pracovní den před koncem měsíce (Poslední den pro ukončení EAN ke konci měsíce z důvodu jeho převedení do jiné skupiny sdílení)</span>
+        </div>
+        <div class="legend-item">
+            <div class="box" style="background: var(--deadline-bg); border-color: var(--deadline-border)"></div>
+            <span><strong>Termín EDC:</strong> 10. pracovní den před koncem měsíce (Uzávěrka registrací a změn s účinností od 1. dne následujícího měsíce)</span>
+        </div>
+        <div class="legend-item">
+            <div class="box" style="background: var(--holiday-bg)"></div>
+            <span>Státní svátek</span>
+        </div>
+        <div class="legend-item">
+            <div class="box" style="background: var(--weekend-bg)"></div>
+            <span>Víkend</span>
+        </div>
+    </footer>
+</div>
+
+<script>
+    let viewDate = new Date();
+    viewDate.setDate(1);
+
+    const monthNames = [
+        "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
+        "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"
+    ];
+
+    const fixedHolidays = {
+        "1-1": "Nový rok",
+        "1-5": "Svátek práce",
+        "8-5": "Den vítězství",
+        "5-7": "Cyril a Metoděj",
+        "6-7": "Jan Hus",
+        "28-9": "Česká státnost",
+        "28-10": "Vznik ČSR",
+        "17-11": "Boj za svobodu",
+        "24-12": "Štědrý den",
+        "25-12": "1. svátek vánoční",
+        "26-12": "2. svátek vánoční"
+    };
+
+    function getEasterHolidays(year) {
+        const a = year % 19;
+        const b = Math.floor(year / 100);
+        const c = year % 100;
+        const d = Math.floor(b / 4);
+        const e = b % 4;
+        const f = Math.floor((b + 8) / 25);
+        const g = Math.floor((b - f + 1) / 3);
+        const h = (19 * a + b - d - g + 15) % 30;
+        const i = Math.floor(c / 4);
+        const k = c % 4;
+        const l = (32 + 2 * e + 2 * i - h - k) % 7;
+        const m = Math.floor((a + 11 * h + 22 * l) / 451);
+        const month = Math.floor((h + l - 7 * m + 114) / 31);
+        const day = ((h + l - 7 * m + 114) % 31) + 1;
+        
+        const easterMonday = new Date(year, month - 1, day + 1);
+        const goodFriday = new Date(year, month - 1, day - 2);
+
+        return {
+            [`${goodFriday.getDate()}-${goodFriday.getMonth() + 1}`]: "Velký pátek",
+            [`${easterMonday.getDate()}-${easterMonday.getMonth() + 1}`]: "Velikonoční pondělí"
+        };
+    }
+
+    function isHoliday(day, month, year) {
+        const key = `${day}-${month + 1}`;
+        const moving = getEasterHolidays(year);
+        return fixedHolidays[key] || moving[key] || null;
+    }
+
+    function getDeadlines(year, month) {
+        let lastDay = new Date(year, month + 1, 0);
+        let workingDaysFound = 0;
+        let checkDate = new Date(lastDay);
+        let results = { registration: null, ean: null };
+
+        while (workingDaysFound < 11) {
+            let dayOfWeek = checkDate.getDay();
+            let holidayName = isHoliday(checkDate.getDate(), checkDate.getMonth(), checkDate.getFullYear());
+            
+            if (dayOfWeek !== 0 && dayOfWeek !== 6 && !holidayName) {
+                workingDaysFound++;
+                if (workingDaysFound === 10) results.registration = checkDate.getDate();
+                if (workingDaysFound === 11) results.ean = checkDate.getDate();
+            }
+            
+            if (workingDaysFound < 11) {
+                checkDate.setDate(checkDate.getDate() - 1);
+            }
+        }
+        return results;
+    }
+
+    function render() {
+        const year = viewDate.getFullYear();
+        const month = viewDate.getMonth();
+        const grid = document.getElementById('calendarGrid');
+        const display = document.getElementById('monthDisplay');
+
+        display.innerText = `${monthNames[month]} ${year}`;
+        grid.innerHTML = '';
+
+        ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'].forEach(d => {
+            const div = document.createElement('div');
+            div.className = 'weekday';
+            div.innerText = d;
+            grid.appendChild(div);
+        });
+
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const deadlines = getDeadlines(year, month);
+        const today = new Date();
+
+        let startDay = firstDay.getDay();
+        if (startDay === 0) startDay = 7;
+        
+        for (let i = 1; i < startDay; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'day-cell empty-cell';
+            grid.appendChild(empty);
+        }
+
+        for (let d = 1; d <= lastDay.getDate(); d++) {
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+            
+            const currentDate = new Date(year, month, d);
+            const dayOfWeek = currentDate.getDay();
+            const holiday = isHoliday(d, month, year);
+            
+            if (dayOfWeek === 0 || dayOfWeek === 6) cell.classList.add('is-weekend');
+            if (holiday) cell.classList.add('is-holiday');
+            
+            if (d === deadlines.registration) cell.classList.add('is-deadline');
+            if (d === deadlines.ean) cell.classList.add('is-ean-deadline');
+
+            if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                cell.classList.add('is-today');
+            }
+
+            let html = `<div class="day-number">${d}</div>`;
+            if (holiday) html += `<div class="holiday-name">${holiday}</div>`;
+            
+            if (d === deadlines.ean) {
+                html += `<div class="deadline-tag tag-ean">Ukončení EAN</div>`;
+            } else if (d === deadlines.registration) {
+                html += `<div class="deadline-tag tag-reg">Termín EDC</div>`;
+            }
+            
+            cell.innerHTML = html;
+            grid.appendChild(cell);
+        }
+    }
+
+    function changeMonth(delta) {
+        viewDate.setMonth(viewDate.getMonth() + delta);
+        render();
+    }
+
+    render();
+</script>
+
+</body>
+</html>
