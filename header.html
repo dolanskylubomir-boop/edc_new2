@@ -1,13 +1,32 @@
+
 <header>
     <div class="container nav-container">
-        <a href="index.html" class="logo-area" aria-label="Domů">
-            <img src="obrázky/logo.png" alt="Logo EDC">
-        </a>
+        <div class="logo-group">
+            <a href="index.html" class="logo-area" aria-label="Domů">
+                <img src="obrázky/logo.png" alt="Logo EDC">
+            </a>
+
+            <!-- Nový odkaz na kalendář vedle loga -->
+            <a href="kalendar-edc.html" class="calendar-link-top" title="Přejít na kalendář EDC">
+                <svg class="calendar-icon-svg" viewBox="0 0 24 24">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <path d="M8 14h.01"></path>
+                    <path d="M12 14h.01"></path>
+                    <path d="M16 14h.01"></path>
+                    <path d="M8 18h.01"></path>
+                    <path d="M12 18h.01"></path>
+                    <path d="M16 18h.01"></path>
+                </svg>
+                <span>EDC kalendář</span>
+            </a>
+        </div>
 
         <!-- Desktop menu -->
         <nav class="desktop-nav" aria-label="Hlavní navigace">
             <ul class="nav-links">
-                <!-- Nový odkaz na WCAG verzi – první v pořadí -->
                 <li>
                     <a href="WCAG.html" class="wcag-accessibility-link" aria-label="Přejít na verzi stránky v souladu s WCAG AAA – zvětšené písmo a vysoký kontrast">
                         ♿ Zobrazení
@@ -29,7 +48,6 @@
         <!-- Mobilní menu -->
         <nav class="mobile-nav" aria-hidden="true" aria-label="Mobilní navigace">
             <ul class="nav-links">
-                <!-- Stejný odkaz i v mobilním menu – první položka -->
                 <li>
                     <a href="WCAG.html" class="wcag-accessibility-link" aria-label="Přejít na verzi stránky v souladu s WCAG AA – zvětšené písmo a vysoký kontrast">
                         ♿ Zobrazení
